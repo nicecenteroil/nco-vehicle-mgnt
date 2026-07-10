@@ -570,14 +570,21 @@
       <button class="fchip c-green" data-u="green" onclick="setUrgFilter('green')"><span class="dot" style="background:var(--green)"></span>ปกติ</button>
     </div>
     <div id="vehicleListContent"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
-    <button class="fab" onclick="openVehicleForm(null)">+</button>
+    <button class="fab need-owner" onclick="openVehicleForm(null)">+</button>
   </div>
 
   <!-- ============ MAINTENANCE ============ -->
   <div class="tab" id="tab-maintenance">
     <div class="vp" id="maintVehicleFilter_vp"></div>
     <div id="maintenanceContent"><div class="empty"><div class="t">เลือกรถเพื่อดูประวัติ</div><div class="s">หรือเลือก "ทุกคัน" เพื่อดูรวม</div></div></div>
-    <button class="fab" onclick="openMaintForm()">+</button>
+    <button class="fab need-edit" onclick="openMaintForm()">+</button>
+  </div>
+
+  <!-- ============ FUEL ============ -->
+  <div class="tab" id="tab-fuel">
+    <div class="vp" id="fuelVehicleFilter_vp"></div>
+    <div id="fuelContent"><div class="skel h160"></div><div class="skel"></div></div>
+    <button class="fab" onclick="openFuelForm()">+</button>
   </div>
 
   <!-- ============ REPORT ============ -->
@@ -596,6 +603,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h-2v-5l2-5h11l3 5h2a1 1 0 0 1 1 1v4h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5"/></svg>รถทั้งหมด</button>
     <button data-tab="maintenance" onclick="switchTab('maintenance')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18a2.1 2.1 0 0 0 3 3l5.7-5.7a4.5 4.5 0 0 0 6-6L14.5 12 12 9.5z"/></svg>ซ่อมบำรุง</button>
+    <button data-tab="fuel" onclick="switchTab('fuel')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15"/><path d="M3 21h12"/><path d="M14 10h2a2 2 0 0 1 2 2v4a1.5 1.5 0 0 0 3 0V9l-3-3"/><path d="M6 8h6"/></svg>เติมน้ำมัน</button>
     <button data-tab="report" onclick="switchTab('report')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15v3M12 10v8M17 6v12"/></svg>รายงาน</button>
   </div>
@@ -654,7 +663,8 @@
         <div class="field"><label>แผนก/สาขา</label><input id="vf_dept"></div>
       </div>
 
-      <div class="fsec">พรบ. / ประกันภัย / ภาษี</div>
+      <div id="vf_ownerSec">
+      <div class="fsec">พรบ. / ประกันภัย / ภาษี <span class="mini-chip">🔒 เฉพาะเจ้าของ</span></div>
       <div class="field"><label>วันที่ พรบ. หมดอายุ</label><div id="vf_act_dates" class="date3"></div></div>
       <div class="f2">
         <div class="field"><label>บริษัทประกันภัย</label><input id="vf_ins_company"></div>
@@ -668,6 +678,31 @@
       <div class="field"><label>เลขกรมธรรม์</label><input id="vf_policy"></div>
       <div class="field"><label>วันประกันหมดอายุ</label><div id="vf_ins_dates" class="date3"></div></div>
       <div class="field"><label>วันภาษี/ทะเบียนหมดอายุ</label><div id="vf_plate_dates" class="date3"></div></div>
+      </div>
+
+      <div class="fsec">สเปกประจำรถ (ของที่ต้องใช้)</div>
+      <div class="f2">
+        <div class="field"><label>น้ำมันเครื่อง (เบอร์/ความจุ)</label><input id="vf_spec_oil" placeholder="เช่น Castrol EDGE 5W-30 4L"></div>
+        <div class="field"><label>กรองน้ำมันเครื่อง (รุ่น)</label><input id="vf_spec_oilfilter" placeholder="เช่น Flomax FTO-159"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>น้ำมันเกียร์</label><input id="vf_spec_gearoil" placeholder="เช่น Castrol ATF 1L x 3"></div>
+        <div class="field"><label>ยาง (เบอร์)</label><input id="vf_spec_tire" placeholder="เช่น 205/60 R16 92V"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>แบตเตอรี่ (รุ่น)</label><input id="vf_spec_battery" placeholder="เช่น GS MFX-60L B24L"></div>
+        <div class="field"><label>กรองอากาศ/แอร์</label><input id="vf_spec_airfilter"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>กรองโซล่า/เชื้อเพลิง</label><input id="vf_spec_fuelfilter" placeholder="เช่น FULL 1-FIS443"></div>
+        <div class="field"><label>ชนิดเชื้อเพลิง</label>
+          <select id="vf_fueltype">
+            <option value="">-- เลือก --</option>
+            <option>ดีเซล</option><option>ดีเซล B7</option><option>เบนซิน 95</option><option>แก๊สโซฮอล์ 95</option>
+            <option>แก๊สโซฮอล์ 91</option><option>E20</option><option>LPG</option><option>NGV</option><option>อื่นๆ</option>
+          </select>
+        </div>
+      </div>
 
       <div class="fsec">สถานะ / อื่นๆ</div>
       <div class="f2">
@@ -719,14 +754,79 @@
   </div>
 </div>
 
+<!-- ============ SCHEDULE FORM SHEET (รอบเปลี่ยนถ่าย) ============ -->
+<div class="overlay" id="schedOverlay" onclick="if(event.target===this)closeOverlay('schedOverlay')">
+  <div class="sheet">
+    <div class="grab"></div>
+    <button class="close-x" onclick="closeOverlay('schedOverlay')">✕</button>
+    <h2 id="schedFormTitle">ตั้งรอบเปลี่ยนถ่าย</h2>
+    <form id="schedForm" onsubmit="submitScheduleForm(event)">
+      <input type="hidden" id="sf_id"><input type="hidden" id="sf_plate">
+      <div class="field"><label>รายการ *</label>
+        <select id="sf_item" required onchange="el('sf_item_custom').style.display = this.value === '__custom__' ? '' : 'none'">
+          <option value="">-- เลือก --</option>
+          <option>น้ำมันเครื่อง</option><option>กรองน้ำมันเครื่อง</option><option>น้ำมันเกียร์</option>
+          <option>น้ำมันเบรค</option><option>น้ำยาหม้อน้ำ</option><option>สลับยาง</option><option>เปลี่ยนยาง</option>
+          <option>แบตเตอรี่</option><option>กรองอากาศ</option><option>กรองแอร์</option><option>กรองโซล่า/เชื้อเพลิง</option>
+          <option value="__custom__">อื่นๆ (พิมพ์เอง)</option>
+        </select>
+        <input id="sf_item_custom" placeholder="พิมพ์ชื่อรายการ" style="display:none;margin-top:8px">
+      </div>
+      <div class="f2">
+        <div class="field"><label>ทุกๆ (กม.)</label><input id="sf_every_km" type="number" placeholder="เช่น 10000"></div>
+        <div class="field"><label>ทุกๆ (เดือน)</label><input id="sf_every_mo" type="number" placeholder="เช่น 6"></div>
+      </div>
+      <div class="field"><label>ทำล่าสุด (วันที่)</label><div id="sf_last_date" class="date3"></div></div>
+      <div class="field"><label>ทำล่าสุด (เลขไมล์)</label><input id="sf_last_km" type="number"></div>
+      <div class="field"><label>หมายเหตุ</label><textarea id="sf_note" rows="2"></textarea></div>
+      <div class="note-box" style="margin-bottom:14px">💡 ระบบจะคำนวณวัน/ไมล์ครบกำหนดให้อัตโนมัติ และอัปเดตเองเมื่อบันทึกงานซ่อมที่ตรงกับรายการนี้ พร้อมแจ้งเตือนทาง LINE เมื่อใกล้ครบรอบ</div>
+      <button class="btn" id="sfSubmitBtn" type="submit">⏰ บันทึกรอบ</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ FUEL FORM SHEET (เติมน้ำมัน/แก๊ส) ============ -->
+<div class="overlay" id="fuelOverlay" onclick="if(event.target===this)closeOverlay('fuelOverlay')">
+  <div class="sheet">
+    <div class="grab"></div>
+    <button class="close-x" onclick="closeOverlay('fuelOverlay')">✕</button>
+    <h2>⛽ บันทึกเติมน้ำมัน / แก๊ส</h2>
+    <form id="fuelForm" onsubmit="submitFuelForm(event)">
+      <div class="field"><label>ทะเบียนรถ *</label><div class="vp" id="ff_plate_vp"></div></div>
+      <div class="field"><label>วันที่</label><div id="ff_date" class="date3"></div></div>
+      <div class="field"><label>ชนิดเชื้อเพลิง *</label>
+        <select id="ff_type" required>
+          <option>ดีเซล</option><option>ดีเซล B7</option><option>เบนซิน 95</option><option>แก๊สโซฮอล์ 95</option>
+          <option>แก๊สโซฮอล์ 91</option><option>E20</option><option>LPG</option><option>NGV</option><option>อื่นๆ</option>
+        </select>
+      </div>
+      <div class="f2">
+        <div class="field"><label>จำนวนเงิน (บาท) *</label><input id="ff_amount" type="number" step="0.01" required></div>
+        <div class="field"><label>จำนวนลิตร</label><input id="ff_liters" type="number" step="0.01"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>เลขไมล์</label><input id="ff_mileage" type="number"></div>
+        <div class="field"><label>สถานี/ปั๊ม</label><input id="ff_station" placeholder="เช่น ปตท. หน้าบริษัท"></div>
+      </div>
+      <div class="field" style="display:flex;align-items:center;gap:9px">
+        <input type="checkbox" id="ff_full" style="width:20px;height:20px;margin:0">
+        <label for="ff_full" style="margin:0;cursor:pointer">เติมเต็มถัง (ใช้คำนวณอัตราสิ้นเปลือง กม./ลิตร)</label>
+      </div>
+      <div class="field"><label>หมายเหตุ</label><textarea id="ff_note" rows="2"></textarea></div>
+      <button class="btn" id="ffSubmitBtn" type="submit">⛽ บันทึกการเติม</button>
+    </form>
+  </div>
+</div>
+
 <script>
 /* ================= API BRIDGE (แทน google.script.run) ================= */
-var API_URL = 'https://script.google.com/macros/s/AKfycbxcE1AKXtMWF57UACMiSgJTO4GOMVNbbGvnLhArXCgmnpedCiEJm_gDxrY4-aXx0SnI/exec'; // ลิงก์ Web App /exec จากการ Deploy GAS
+var API_URL = 'PASTE_GAS_EXEC_URL_HERE'; // ลิงก์ Web App /exec จากการ Deploy GAS
 
 var google = { script: {} };
 (function(){
   var METHODS = ['getUserInfo','getAllVehicles','addVehicle','updateVehicle','deleteVehicle',
-    'getMaintenanceLogs','addMaintenanceLog','getDashboardData','uploadAttachment','logout'];
+    'getMaintenanceLogs','addMaintenanceLog','getDashboardData','uploadAttachment','logout',
+    'getSchedules','saveSchedule','deleteSchedule','getFuelLogs','addFuelLog'];
   function Runner(){ this._ok = function(){}; this._err = function(){}; }
   Runner.prototype.withSuccessHandler = function(f){ this._ok = f; return this; };
   Runner.prototype.withFailureHandler = function(f){ this._err = f; return this; };
@@ -768,9 +868,10 @@ function submitLogin(e){
       if (!res.success){ errEl.innerText = res.error || 'PIN ไม่ถูกต้อง'; errEl.style.display = 'block'; pinEl.value = ''; pinEl.focus(); return; }
       localStorage.setItem('vh_token', res.data.token);
       localStorage.setItem('vh_user', res.data.name);
+      localStorage.setItem('vh_role', res.data.role || '');
       pinEl.value = '';
       document.getElementById('loginScreen').style.display = 'none';
-      onUserInfo({ success: true, data: { email: res.data.name } });
+      onUserInfo({ success: true, data: { email: res.data.name, role: res.data.role } });
     })
     .catch(function(err){
       btn.classList.remove('loading');
@@ -778,7 +879,7 @@ function submitLogin(e){
     });
 }
 function vhLogout(expired){
-  localStorage.removeItem('vh_token'); localStorage.removeItem('vh_user');
+  localStorage.removeItem('vh_token'); localStorage.removeItem('vh_user'); localStorage.removeItem('vh_role');
   showLogin();
   if (expired){
     var errEl = document.getElementById('loginError');
@@ -794,10 +895,20 @@ function logoutClick(){
 <script>
 /* ================= STATE ================= */
 var STATE = {
-  vehicles: [], userEmail: '', currentEditId: null,
+  vehicles: [], userEmail: '', userRole: '', currentEditId: null,
   groupMode: 'type', urgFilter: '', collapsed: {},
-  maintAll: null, dashLoaded: false
+  maintAll: null, dashLoaded: false, fuelAll: null
 };
+
+/* ================= ROLES =================
+   เจ้าของ: ทุกอย่าง (พรบ./ประกัน/ภาษี/เพิ่ม-ลบรถ)
+   แอดมิน/DSR: บันทึกซ่อม เปลี่ยนถ่าย สเปก รอบเปลี่ยนถ่าย แก้รายละเอียดรถ
+   คนขับ: ดูข้อมูล + บันทึกเติมน้ำมัน/แก๊ส
+   (role ว่าง = backend เก่ายังไม่ส่ง role มา → เปิดทุกสิทธิ์เหมือนเดิม) */
+var SCHEDULE_ITEMS = ['น้ำมันเครื่อง','กรองน้ำมันเครื่อง','น้ำมันเกียร์','น้ำมันเบรค','น้ำยาหม้อน้ำ','สลับยาง','เปลี่ยนยาง','แบตเตอรี่','กรองอากาศ','กรองแอร์','กรองโซล่า/เชื้อเพลิง'];
+var FUEL_TYPES = ['ดีเซล','ดีเซล B7','เบนซิน 95','แก๊สโซฮอล์ 95','แก๊สโซฮอล์ 91','E20','LPG','NGV','อื่นๆ'];
+function isOwner(){ return !STATE.userRole || STATE.userRole === 'เจ้าของ'; }
+function canEdit(){ return isOwner() || STATE.userRole === 'แอดมิน' || STATE.userRole === 'DSR'; }
 
 var TH_M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 var TYPE_ICONS = {'รถขนส่ง':'🚚','รถพนักงานขาย (DSR)':'🚗','รถส่วนตัวเจ้าของ':'🏠'};
@@ -896,12 +1007,22 @@ function onUserInfo(res){
     return;
   }
   STATE.userEmail = res.data.email;
+  STATE.userRole = res.data.role || localStorage.getItem('vh_role') || '';
   var av = el('userAvatar');
   av.innerText = (res.data.email || '?').charAt(0).toUpperCase();
-  av.title = res.data.email;
+  av.title = res.data.email + (STATE.userRole ? ' (' + STATE.userRole + ')' : '');
   el('appRoot').style.display = 'block';
   el('bottomNav').style.display = 'flex';
+  applyRoleUi();
   loadDashboard();
+}
+function applyRoleUi(){
+  // ปุ่มที่ต้องเป็น เจ้าของ/แอดมิน/DSR (บันทึกซ่อม/แก้ข้อมูล)
+  document.querySelectorAll('.need-edit').forEach(function(b){ b.style.display = canEdit() ? '' : 'none'; });
+  // ปุ่มที่ต้องเป็น เจ้าของ เท่านั้น (เพิ่มรถ)
+  document.querySelectorAll('.need-owner').forEach(function(b){ b.style.display = isOwner() ? '' : 'none'; });
+  // คนขับ → เปิดหน้าเติมน้ำมันเป็นหน้าแรก (ใช้งานบ่อยสุด)
+  if (!canEdit()) switchTab('fuel');
 }
 function onFatalError(err){
   el('authError').style.display = 'block';
@@ -917,6 +1038,7 @@ function switchTab(name){
   if (name === 'dashboard') loadDashboard();
   if (name === 'vehicles'){ if (STATE.vehicles.length) renderVehicleList(); else loadVehicles(); }
   if (name === 'maintenance') initMaintTab();
+  if (name === 'fuel') initFuelTab();
   if (name === 'report') loadReport();
 }
 
@@ -1246,6 +1368,23 @@ function openDetail(id){
   '<div class="d-row"><span class="k">เลขเครื่องยนต์</span><span class="v">' + esc(v['เลขเครื่องยนต์'] || '-') + '</span></div>' +
   (v['หมายเหตุ'] ? '<div class="note-box">📌 ' + esc(v['หมายเหตุ']) + '</div>' : '');
 
+  /* สเปกประจำรถ */
+  var specPairs = [
+    ['🛢️ น้ำมันเครื่อง', v['สเปกน้ำมันเครื่อง']], ['🌀 กรองน้ำมันเครื่อง', v['สเปกกรองน้ำมันเครื่อง']],
+    ['⚙️ น้ำมันเกียร์', v['สเปกน้ำมันเกียร์']], ['⚫ ยาง', v['สเปกยาง']],
+    ['🔋 แบตเตอรี่', v['สเปกแบตเตอรี่']], ['💨 กรองอากาศ/แอร์', v['สเปกกรองอากาศ/แอร์']],
+    ['⛽ กรองโซล่า/เชื้อเพลิง', v['สเปกกรองโซล่า/เชื้อเพลิง']], ['⛽ ชนิดเชื้อเพลิง', v['ชนิดเชื้อเพลิง']]
+  ].filter(function(p){ return p[1]; });
+  html += '<div class="fsec">สเปกประจำรถ</div>';
+  html += specPairs.length
+    ? specPairs.map(function(p){ return '<div class="d-row"><span class="k">' + p[0] + '</span><span class="v">' + esc(p[1]) + '</span></div>'; }).join('')
+    : '<div class="muted" style="padding:4px 2px">ยังไม่ได้บันทึกสเปก' + (canEdit() ? ' — กด "แก้ไขข้อมูล" เพื่อเพิ่ม' : '') + '</div>';
+
+  /* รอบเปลี่ยนถ่าย/บำรุงรักษา */
+  html += '<div class="fsec">รอบเปลี่ยนถ่าย / บำรุงรักษา' +
+    (canEdit() ? ' <button type="button" class="mini-chip" style="cursor:pointer;border:none" onclick="openScheduleForm(\'' + esc(v['ทะเบียนรถ']).replace(/'/g, "\\'") + '\', null)">➕ เพิ่มรอบ</button>' : '') +
+    '</div><div id="detailSchedules"><div class="skel h60"></div></div>';
+
   if (v['ลิงก์เอกสารแนบ']){
     html += '<div class="fsec">เอกสารแนบ</div><div class="doc-links">' +
       String(v['ลิงก์เอกสารแนบ']).split('\n').filter(String).map(function(u, i){
@@ -1253,15 +1392,21 @@ function openDetail(id){
       }).join('') + '</div>';
   }
 
-  html += '<div class="fsec">ประวัติซ่อมล่าสุด</div><div id="detailMaint"><div class="skel h60"></div></div>' +
-  '<div class="btn-row">' +
-    '<button class="btn secondary" onclick="closeOverlay(\'detailOverlay\');openVehicleForm(\'' + esc(v.ID) + '\')">✏️ แก้ไขข้อมูล</button>' +
-    '<button class="btn" onclick="closeOverlay(\'detailOverlay\');openMaintFormFor(\'' + esc(v.ID) + '\')">🔧 เพิ่มงานซ่อม</button>' +
-  '</div>' +
-  '<button class="btn danger" style="margin-top:10px" onclick="retireVehicle(\'' + esc(v.ID) + '\')">🚫 ปลดระวาง / ขายแล้ว</button>';
+  html += '<div class="fsec">ประวัติซ่อมล่าสุด</div><div id="detailMaint"><div class="skel h60"></div></div>';
+  var btns = ['<button class="btn secondary" onclick="closeOverlay(\'detailOverlay\');openFuelFormFor(\'' + esc(v.ID) + '\')">⛽ เติมน้ำมัน</button>'];
+  if (canEdit()){
+    btns.unshift('<button class="btn secondary" onclick="closeOverlay(\'detailOverlay\');openVehicleForm(\'' + esc(v.ID) + '\')">✏️ แก้ไขข้อมูล</button>');
+    btns.push('<button class="btn" onclick="closeOverlay(\'detailOverlay\');openMaintFormFor(\'' + esc(v.ID) + '\')">🔧 เพิ่มงานซ่อม</button>');
+  }
+  html += '<div class="btn-row">' + btns.join('') + '</div>';
+  if (isOwner()){
+    html += '<button class="btn danger" style="margin-top:10px" onclick="retireVehicle(\'' + esc(v.ID) + '\')">🚫 ปลดระวาง / ขายแล้ว</button>';
+  }
 
   el('detailContent').innerHTML = html;
   el('detailOverlay').classList.add('show');
+
+  loadDetailSchedules(v['ทะเบียนรถ']);
 
   google.script.run.withSuccessHandler(function(res){
     var box = el('detailMaint');
@@ -1582,6 +1727,14 @@ function openVehicleForm(id){
     el('vf_mileage').value = v['เลขไมล์ล่าสุด'] || '';
     el('vf_status').value = v['สถานะรถ'] || 'ใช้งานปกติ';
     el('vf_note').value = v['หมายเหตุ'] || '';
+    el('vf_spec_oil').value = v['สเปกน้ำมันเครื่อง'] || '';
+    el('vf_spec_oilfilter').value = v['สเปกกรองน้ำมันเครื่อง'] || '';
+    el('vf_spec_gearoil').value = v['สเปกน้ำมันเกียร์'] || '';
+    el('vf_spec_tire').value = v['สเปกยาง'] || '';
+    el('vf_spec_battery').value = v['สเปกแบตเตอรี่'] || '';
+    el('vf_spec_airfilter').value = v['สเปกกรองอากาศ/แอร์'] || '';
+    el('vf_spec_fuelfilter').value = v['สเปกกรองโซล่า/เชื้อเพลิง'] || '';
+    el('vf_fueltype').value = v['ชนิดเชื้อเพลิง'] || '';
     setDateSelectValue('vf_act', v['วันที่ พรบ. หมดอายุ']);
     setDateSelectValue('vf_ins', v['วันประกันหมดอายุ']);
     setDateSelectValue('vf_pd', v['วันภาษี/ทะเบียนหมดอายุ']);
@@ -1596,6 +1749,10 @@ function openVehicleForm(id){
     el('vf_id').value = '';
     el('vf_status').value = 'ใช้งานปกติ';
   }
+  // สิทธิ์: ไม่ใช่เจ้าของ → ซ่อนส่วน พรบ./ประกัน/ภาษี และล็อกทะเบียน/ประเภทรถ
+  el('vf_ownerSec').style.display = isOwner() ? '' : 'none';
+  el('vf_plate').disabled = !isOwner() && !!id;
+  el('vf_type').disabled = !isOwner() && !!id;
   el('vehicleOverlay').classList.add('show');
 }
 function submitVehicleForm(e){
@@ -1603,16 +1760,26 @@ function submitVehicleForm(e){
   var btn = el('vfSubmitBtn'); btn.classList.add('loading');
   var id = el('vf_id').value;
   var data = {
-    'ประเภทรถ': el('vf_type').value, 'ทะเบียนรถ': el('vf_plate').value, 'จังหวัดทะเบียน': el('vf_province').value,
     'ยี่ห้อ': el('vf_brand').value, 'รุ่น': el('vf_model').value, 'ปี (พ.ศ.)': el('vf_year').value,
+    'จังหวัดทะเบียน': el('vf_province').value,
     'สี': el('vf_color').value, 'เลขตัวถัง': el('vf_chassis').value, 'เลขเครื่องยนต์': el('vf_engine').value,
     'ผู้ใช้งาน/คนขับหลัก': el('vf_driver').value, 'แผนก/สาขา': el('vf_dept').value,
-    'วันที่ พรบ. หมดอายุ': getDateSelectValue('vf_act'),
-    'บริษัทประกันภัย': el('vf_ins_company').value, 'ประเภทประกัน': el('vf_ins_type').value, 'เลขกรมธรรม์': el('vf_policy').value,
-    'วันประกันหมดอายุ': getDateSelectValue('vf_ins'),
-    'วันภาษี/ทะเบียนหมดอายุ': getDateSelectValue('vf_pd'),
-    'เลขไมล์ล่าสุด': el('vf_mileage').value, 'สถานะรถ': el('vf_status').value, 'หมายเหตุ': el('vf_note').value
+    'เลขไมล์ล่าสุด': el('vf_mileage').value, 'สถานะรถ': el('vf_status').value, 'หมายเหตุ': el('vf_note').value,
+    'สเปกน้ำมันเครื่อง': el('vf_spec_oil').value, 'สเปกกรองน้ำมันเครื่อง': el('vf_spec_oilfilter').value,
+    'สเปกน้ำมันเกียร์': el('vf_spec_gearoil').value, 'สเปกยาง': el('vf_spec_tire').value,
+    'สเปกแบตเตอรี่': el('vf_spec_battery').value, 'สเปกกรองอากาศ/แอร์': el('vf_spec_airfilter').value,
+    'สเปกกรองโซล่า/เชื้อเพลิง': el('vf_spec_fuelfilter').value, 'ชนิดเชื้อเพลิง': el('vf_fueltype').value
   };
+  if (isOwner() || !id){ // เพิ่มรถใหม่ = เจ้าของเท่านั้นอยู่แล้ว / แก้ไข = ส่งฟิลด์สำคัญเฉพาะเจ้าของ
+    data['ประเภทรถ'] = el('vf_type').value;
+    data['ทะเบียนรถ'] = el('vf_plate').value;
+    data['วันที่ พรบ. หมดอายุ'] = getDateSelectValue('vf_act');
+    data['บริษัทประกันภัย'] = el('vf_ins_company').value;
+    data['ประเภทประกัน'] = el('vf_ins_type').value;
+    data['เลขกรมธรรม์'] = el('vf_policy').value;
+    data['วันประกันหมดอายุ'] = getDateSelectValue('vf_ins');
+    data['วันภาษี/ทะเบียนหมดอายุ'] = getDateSelectValue('vf_pd');
+  }
   var done = function(){
     btn.classList.remove('loading');
     closeOverlay('vehicleOverlay');
@@ -1685,6 +1852,197 @@ function submitMaintForm(e){
     if (fi.files && fi.files[0]) uploadFile(fi.files[0], data['ทะเบียนรถ'], done);
     else done();
   }).withFailureHandler(function(err){ btn.classList.remove('loading'); onFatalError(err); }).addMaintenanceLog(data);
+}
+
+/* ================= SCHEDULES (รอบเปลี่ยนถ่าย) ================= */
+function schedChipHtml(s){
+  var cls = s._dueStatus === 'due' ? 'red' : s._dueStatus === 'soon' ? 'yellow' : 'green';
+  var parts = [];
+  if (s._daysLeft !== null && s._daysLeft !== undefined) parts.push(s._daysLeft < 0 ? 'เลย ' + Math.abs(s._daysLeft) + ' วัน' : 'อีก ' + s._daysLeft + ' วัน');
+  if (s._kmLeft !== null && s._kmLeft !== undefined) parts.push(s._kmLeft < 0 ? 'เลย ' + formatMoney(Math.abs(s._kmLeft)) + ' กม.' : 'อีก ' + formatMoney(s._kmLeft) + ' กม.');
+  if (!parts.length) return '<span class="days-tag" style="background:var(--gray-soft);color:var(--gray)">ยังไม่ครบข้อมูล</span>';
+  return '<span class="days-tag ' + cls + '">' + parts.join(' · ') + '</span>';
+}
+function schedRowHtml(s){
+  var every = [];
+  if (Number(s['ทุกๆ (กม.)'])) every.push('ทุก ' + formatMoney(s['ทุกๆ (กม.)']) + ' กม.');
+  if (Number(s['ทุกๆ (เดือน)'])) every.push('ทุก ' + s['ทุกๆ (เดือน)'] + ' เดือน');
+  var due = [];
+  if (s['ครบกำหนด (วันที่)']) due.push(formatDateThai(s['ครบกำหนด (วันที่)']));
+  if (Number(s['ครบกำหนด (ไมล์)'])) due.push(formatMoney(s['ครบกำหนด (ไมล์)']) + ' กม.');
+  var act = canEdit()
+    ? '<span style="white-space:nowrap"><button type="button" class="mini-chip" style="cursor:pointer;border:none" onclick="openScheduleForm(null,\'' + esc(s.ID) + '\')">✏️</button> ' +
+      '<button type="button" class="mini-chip" style="cursor:pointer;border:none" onclick="deleteScheduleClick(\'' + esc(s.ID) + '\')">🗑️</button></span>'
+    : '';
+  return '<div class="exp-line"><span class="nm">🔁 ' + esc(s['รายการ']) +
+    (every.length ? '<br><small class="muted">' + every.join(' / ') + '</small>' : '') + '</span>' +
+    '<span class="dt">' + (due.length ? 'ครบ: ' + due.join(' · ') : '-') + '</span>' +
+    schedChipHtml(s) + act + '</div>';
+}
+function loadDetailSchedules(plate){
+  google.script.run.withSuccessHandler(function(res){
+    var box = el('detailSchedules');
+    if (!box) return;
+    if (!res.success){ box.innerHTML = '<div class="muted" style="padding:4px 2px">' + esc(res.error || 'โหลดไม่สำเร็จ') + '</div>'; return; }
+    STATE._schedules = res.data;
+    box.innerHTML = res.data.length
+      ? '<div class="exp-big">' + res.data.map(schedRowHtml).join('') + '</div>'
+      : '<div class="muted" style="padding:4px 2px">ยังไม่ได้ตั้งรอบ' + (canEdit() ? ' — กด "➕ เพิ่มรอบ" เช่น น้ำมันเครื่องทุก 10,000 กม.' : '') + '</div>';
+    STATE._schedPlate = plate;
+  }).withFailureHandler(function(){}).getSchedules(plate);
+}
+function openScheduleForm(plate, schedId){
+  var s = null;
+  if (schedId) s = (STATE._schedules || []).filter(function(x){ return x.ID === schedId; })[0];
+  el('sf_last_date').innerHTML = dateSelectHtml('sfl');
+  el('schedForm').reset();
+  el('sf_item_custom').style.display = 'none';
+  el('sf_id').value = s ? s.ID : '';
+  el('sf_plate').value = s ? s['ทะเบียนรถ'] : (plate || STATE._schedPlate || '');
+  el('schedFormTitle').innerText = (s ? '✏️ แก้ไขรอบ' : '⏰ ตั้งรอบเปลี่ยนถ่าย') + ' — ' + el('sf_plate').value;
+  if (s){
+    var known = SCHEDULE_ITEMS.indexOf(s['รายการ']) !== -1;
+    el('sf_item').value = known ? s['รายการ'] : '__custom__';
+    if (!known){ el('sf_item_custom').style.display = ''; el('sf_item_custom').value = s['รายการ']; }
+    el('sf_every_km').value = s['ทุกๆ (กม.)'] || '';
+    el('sf_every_mo').value = s['ทุกๆ (เดือน)'] || '';
+    el('sf_last_km').value = s['ทำล่าสุด (ไมล์)'] || '';
+    el('sf_note').value = s['หมายเหตุ'] || '';
+    setDateSelectValue('sfl', s['ทำล่าสุด (วันที่)']);
+  }
+  el('schedOverlay').classList.add('show');
+}
+function submitScheduleForm(e){
+  e.preventDefault();
+  var item = el('sf_item').value === '__custom__' ? el('sf_item_custom').value.trim() : el('sf_item').value;
+  if (!item){ toast('⚠️ กรุณาเลือกรายการ'); return; }
+  if (!el('sf_every_km').value && !el('sf_every_mo').value){ toast('⚠️ กรอก "ทุกๆ กม." หรือ "ทุกๆ เดือน" อย่างน้อย 1 ช่อง'); return; }
+  var btn = el('sfSubmitBtn'); btn.classList.add('loading');
+  var data = {
+    'ทะเบียนรถ': el('sf_plate').value, 'รายการ': item,
+    'ทุกๆ (กม.)': el('sf_every_km').value, 'ทุกๆ (เดือน)': el('sf_every_mo').value,
+    'ทำล่าสุด (วันที่)': getDateSelectValue('sfl'), 'ทำล่าสุด (ไมล์)': el('sf_last_km').value,
+    'หมายเหตุ': el('sf_note').value
+  };
+  if (el('sf_id').value) data['ID'] = el('sf_id').value;
+  google.script.run.withSuccessHandler(function(res){
+    btn.classList.remove('loading');
+    if (!res.success){ toast('⚠️ ' + (res.error || 'บันทึกไม่สำเร็จ')); return; }
+    closeOverlay('schedOverlay');
+    toast('บันทึกรอบเรียบร้อย');
+    if (el('detailOverlay').classList.contains('show')) loadDetailSchedules(data['ทะเบียนรถ']);
+  }).withFailureHandler(function(err){ btn.classList.remove('loading'); onFatalError(err); }).saveSchedule(data);
+}
+function deleteScheduleClick(id){
+  if (!confirm('ลบรอบเปลี่ยนถ่ายรายการนี้?')) return;
+  google.script.run.withSuccessHandler(function(){
+    toast('ลบเรียบร้อย');
+    if (STATE._schedPlate) loadDetailSchedules(STATE._schedPlate);
+  }).withFailureHandler(onFatalError).deleteSchedule(id);
+}
+
+/* ================= FUEL TAB (เติมน้ำมัน/แก๊ส) ================= */
+function initFuelTab(){
+  var ready = function(){
+    if (!VP_STATE['fuelVehicleFilter']) vpInit('fuelVehicleFilter', { allLabel: '⛽ ทุกคัน (รวมทั้งหมด)', onChange: loadFuelLogs });
+    if (!el('fuelContent').dataset.loaded) loadFuelLogs();
+  };
+  if (STATE.vehicles.length){ ready(); return; }
+  google.script.run.withSuccessHandler(function(res){
+    if (res.success){ STATE.vehicles = res.data; ready(); }
+  }).withFailureHandler(onFatalError).getAllVehicles();
+}
+function loadFuelLogs(){
+  var plate = el('fuelVehicleFilter') ? el('fuelVehicleFilter').value : '';
+  el('fuelContent').dataset.loaded = '1';
+  el('fuelContent').innerHTML = '<div class="skel h160"></div><div class="skel"></div>';
+  google.script.run.withSuccessHandler(function(res){
+    if (!res.success){ el('fuelContent').innerHTML = '<div class="err">' + esc(res.error) + '</div>'; return; }
+    renderFuel(res.data, plate);
+  }).withFailureHandler(onFatalError).getFuelLogs(plate);
+}
+function renderFuel(rows, plate){
+  var now = new Date();
+  var mk = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
+  var moTotal = 0, moLiters = 0;
+  rows.forEach(function(r){
+    var d = r['วันที่'] ? new Date(r['วันที่']) : null;
+    if (d && !isNaN(d.getTime()) && (d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2)) === mk){
+      moTotal += Number(r['จำนวนเงิน (บาท)']) || 0;
+      moLiters += Number(r['จำนวนลิตร']) || 0;
+    }
+  });
+  var html = '<div class="hero anim-in" style="padding:18px 16px">' +
+    '<div class="muted">ค่าเชื้อเพลิงเดือนนี้' + (plate ? ' — ' + esc(plate) : ' (ทุกคัน)') + '</div>' +
+    '<div class="big-num" style="font-size:32px;margin-top:4px">' + formatMoney(moTotal) + ' <small>บาท</small></div>' +
+    '<div class="muted" style="margin-top:4px">' + (moLiters ? formatMoney(moLiters) + ' ลิตร · ' : '') + rows.length + ' รายการทั้งหมด</div></div>';
+  if (!rows.length){
+    html += '<div class="empty"><div class="t">ยังไม่มีบันทึกการเติม</div><div class="s">กด + เพื่อบันทึกการเติมน้ำมัน/แก๊สครั้งแรก</div></div>';
+  } else {
+    html += '<div class="tl">' + rows.map(function(r, i){
+      var liters = Number(r['จำนวนลิตร']) || 0;
+      var amount = Number(r['จำนวนเงิน (บาท)']) || 0;
+      var kml = r._kmPerLiter ? '<span class="days-tag green">' + r._kmPerLiter + ' กม./ลิตร</span>' : '';
+      return '<div class="tl-item" style="animation-delay:' + (Math.min(i,12) * 40) + 'ms"><div class="tl-dot">⛽</div><div class="tl-card">' +
+        '<div class="tl-head"><span class="tl-type">' + (plate ? '' : esc(r['ทะเบียนรถ']) + ' · ') + esc(r['ชนิดเชื้อเพลิง'] || '-') + '</span>' +
+        '<span class="tl-date">' + formatDateThai(r['วันที่']) + '</span></div>' +
+        '<div class="tl-foot"><span class="tl-vendor">' +
+          (liters ? formatMoney(liters) + ' ลิตร' : '') +
+          (r['ราคา/ลิตร'] ? ' · ' + r['ราคา/ลิตร'] + ' ฿/ล.' : '') +
+          (r['เลขไมล์'] ? ' · 🛣️ ' + formatMoney(r['เลขไมล์']) + ' กม.' : '') +
+          (r['สถานี/ปั๊ม'] ? ' · 🏪 ' + esc(r['สถานี/ปั๊ม']) : '') +
+          ' · 👤 ' + esc(r['ผู้บันทึก'] || '-') + '</span>' +
+        '<span class="cost-tag">' + formatMoney(amount) + ' ฿</span></div>' +
+        (kml ? '<div class="next-due">' + kml + '</div>' : '') + '</div></div>';
+    }).join('') + '</div>';
+  }
+  el('fuelContent').innerHTML = html;
+}
+function openFuelForm(){
+  var open = function(){
+    if (!VP_STATE['ff_plate']) vpInit('ff_plate', { placeholder: '-- เลือกทะเบียนรถ --' });
+    el('ff_date').innerHTML = dateSelectHtml('ffd');
+    el('fuelForm').reset();
+    setDateSelectValue('ffd', new Date());
+    var pre = (VP_STATE['fuelVehicleFilter'] && el('fuelVehicleFilter')) ? el('fuelVehicleFilter').value : '';
+    vpSet('ff_plate', pre);
+    el('fuelOverlay').classList.add('show');
+  };
+  if (STATE.vehicles.length){ open(); return; }
+  google.script.run.withSuccessHandler(function(res){
+    if (res.success){ STATE.vehicles = res.data; open(); }
+  }).withFailureHandler(onFatalError).getAllVehicles();
+}
+function openFuelFormFor(vehicleId){
+  var v = STATE.vehicles.filter(function(x){ return x.ID === vehicleId; })[0];
+  openFuelForm();
+  if (v){
+    vpSet('ff_plate', v['ทะเบียนรถ']);
+    if (v['ชนิดเชื้อเพลิง']) el('ff_type').value = v['ชนิดเชื้อเพลิง'];
+  }
+}
+function submitFuelForm(e){
+  e.preventDefault();
+  if (!el('ff_plate') || !el('ff_plate').value){ toast('⚠️ กรุณาเลือกทะเบียนรถก่อนบันทึก'); return; }
+  var btn = el('ffSubmitBtn'); btn.classList.add('loading');
+  var data = {
+    'ทะเบียนรถ': el('ff_plate').value,
+    'วันที่': getDateSelectValue('ffd'),
+    'ชนิดเชื้อเพลิง': el('ff_type').value,
+    'จำนวนเงิน (บาท)': el('ff_amount').value,
+    'จำนวนลิตร': el('ff_liters').value,
+    'เลขไมล์': el('ff_mileage').value,
+    'สถานี/ปั๊ม': el('ff_station').value,
+    'เต็มถัง': el('ff_full').checked ? 'true' : '',
+    'หมายเหตุ': el('ff_note').value
+  };
+  google.script.run.withSuccessHandler(function(res){
+    btn.classList.remove('loading');
+    if (!res.success){ toast('⚠️ ' + (res.error || 'บันทึกไม่สำเร็จ')); return; }
+    closeOverlay('fuelOverlay');
+    toast('บันทึกการเติมเรียบร้อย ⛽');
+    if (el('tab-fuel').classList.contains('active')) loadFuelLogs();
+  }).withFailureHandler(function(err){ btn.classList.remove('loading'); onFatalError(err); }).addFuelLog(data);
 }
 
 /* ================= SHARED ================= */
