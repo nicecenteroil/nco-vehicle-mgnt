@@ -16,6 +16,8 @@ var CONFIG = {
   SHEET_SETTINGS: 'Settings',
   SHEET_DASHBOARD: 'Dashboard',
   SHEET_USERS: 'Users',
+  SHEET_SCHEDULES: 'Schedules', // รอบเปลี่ยนถ่าย/บำรุงรักษาตามระยะ
+  SHEET_FUEL: 'Fuel',           // บันทึกเติมน้ำมัน/แก๊ส
   WEB_APP_URL: 'https://car.nicecenter.co.th', // หน้าเว็บจริง (doGet จะ redirect ไปที่นี่)
   TOKEN_DAYS: 90, // อายุ token ล็อกอิน (วัน)
   DRIVE_ROOT_FOLDER: 'ระบบจัดการรถ - เอกสารแนบ',
@@ -23,15 +25,42 @@ var CONFIG = {
   VEHICLE_TYPES: ['รถขนส่ง', 'รถพนักงานขาย (DSR)', 'รถส่วนตัวเจ้าของ'],
   INSURANCE_TYPES: ['ชั้น 1', 'ชั้น 2+', 'ชั้น 2', 'ชั้น 3+', 'ชั้น 3', 'ไม่มี/ยังไม่ทำ'],
   STATUS_OPTIONS: ['ใช้งานปกติ', 'ซ่อมบำรุง', 'จอดไม่ใช้งาน', 'ขายแล้ว/ปลดระวาง'],
-  MAINTENANCE_TYPES: ['เช็คระยะ/PM', 'ซ่อมทั่วไป', 'เปลี่ยนยาง', 'เปลี่ยนน้ำมันเครื่อง', 'ซ่อมเครื่องยนต์', 'ซ่อมตัวถัง/สี', 'แบตเตอรี่', 'อื่นๆ']
+  MAINTENANCE_TYPES: ['เช็คระยะ/PM', 'ซ่อมทั่วไป', 'เปลี่ยนยาง', 'เปลี่ยนน้ำมันเครื่อง', 'ซ่อมเครื่องยนต์', 'ซ่อมตัวถัง/สี', 'แบตเตอรี่', 'อื่นๆ'],
+  // รายการรอบเปลี่ยนถ่ายมาตรฐาน (เลือกได้ในหน้ารถแต่ละคัน)
+  SCHEDULE_ITEMS: ['น้ำมันเครื่อง', 'กรองน้ำมันเครื่อง', 'น้ำมันเกียร์', 'น้ำมันเบรค', 'น้ำยาหม้อน้ำ', 'สลับยาง', 'เปลี่ยนยาง', 'แบตเตอรี่', 'กรองอากาศ', 'กรองแอร์', 'กรองโซล่า/เชื้อเพลิง'],
+  SCHEDULE_KM_WARN: 1000, // แจ้งเตือนล่วงหน้าเมื่อไมล์เหลืออีกไม่เกิน X กม. จะครบรอบ
+  FUEL_TYPES: ['ดีเซล', 'ดีเซล B7', 'เบนซิน 95', 'แก๊สโซฮอล์ 95', 'แก๊สโซฮอล์ 91', 'E20', 'LPG', 'NGV', 'อื่นๆ'],
+  // บทบาทผู้ใช้ (คอลัมน์ "บทบาท" ในชีต Users)
+  ROLES: ['เจ้าของ', 'แอดมิน', 'DSR', 'คนขับ']
 };
+
+// ฟิลด์สำคัญของรถ — แก้ไขได้เฉพาะบทบาท "เจ้าของ" (เฟิร์น/ภูมิ)
+var PROTECTED_VEHICLE_FIELDS = [
+  'ทะเบียนรถ', 'ประเภทรถ',
+  'วันที่ พรบ. หมดอายุ', 'บริษัทประกันภัย', 'ประเภทประกัน', 'เลขกรมธรรม์',
+  'วันประกันหมดอายุ', 'วันภาษี/ทะเบียนหมดอายุ'
+];
 
 var VEHICLE_HEADERS = [
   'ID', 'ประเภทรถ', 'ทะเบียนรถ', 'จังหวัดทะเบียน', 'ยี่ห้อ', 'รุ่น', 'ปี (พ.ศ.)', 'สี',
   'เลขตัวถัง', 'เลขเครื่องยนต์', 'ผู้ใช้งาน/คนขับหลัก', 'แผนก/สาขา',
   'วันที่ พรบ. หมดอายุ', 'บริษัทประกันภัย', 'ประเภทประกัน', 'เลขกรมธรรม์', 'วันประกันหมดอายุ',
   'วันภาษี/ทะเบียนหมดอายุ', 'เลขไมล์ล่าสุด', 'วันที่บันทึกไมล์', 'สถานะรถ',
-  'ลิงก์เอกสารแนบ', 'หมายเหตุ', 'แจ้งเตือนล่าสุดเมื่อ', 'อัปเดตล่าสุดโดย', 'อัปเดตล่าสุดเมื่อ'
+  'ลิงก์เอกสารแนบ', 'หมายเหตุ', 'แจ้งเตือนล่าสุดเมื่อ', 'อัปเดตล่าสุดโดย', 'อัปเดตล่าสุดเมื่อ',
+  // ── สเปกประจำรถ (เพิ่ม v3 — รันเมนู "อัปเกรดระบบ v3" เพื่อเพิ่มคอลัมน์ในชีตเดิม) ──
+  'สเปกน้ำมันเครื่อง', 'สเปกกรองน้ำมันเครื่อง', 'สเปกน้ำมันเกียร์', 'สเปกยาง',
+  'สเปกแบตเตอรี่', 'สเปกกรองอากาศ/แอร์', 'สเปกกรองโซล่า/เชื้อเพลิง', 'ชนิดเชื้อเพลิง'
+];
+
+var SCHEDULE_HEADERS = [
+  'ID', 'ทะเบียนรถ', 'รายการ', 'ทุกๆ (กม.)', 'ทุกๆ (เดือน)',
+  'ทำล่าสุด (วันที่)', 'ทำล่าสุด (ไมล์)', 'ครบกำหนด (วันที่)', 'ครบกำหนด (ไมล์)',
+  'หมายเหตุ', 'อัปเดตล่าสุดโดย', 'อัปเดตล่าสุดเมื่อ'
+];
+
+var FUEL_HEADERS = [
+  'ID', 'วันที่', 'ทะเบียนรถ', 'ชนิดเชื้อเพลิง', 'จำนวนลิตร', 'จำนวนเงิน (บาท)',
+  'ราคา/ลิตร', 'เลขไมล์', 'สถานี/ปั๊ม', 'เต็มถัง', 'ผู้บันทึก', 'หมายเหตุ'
 ];
 
 var MAINTENANCE_HEADERS = [
@@ -255,9 +284,68 @@ function onOpen() {
     .addItem('⚙️ ตั้งค่าระบบครั้งแรก (Setup)', 'setupSheets')
     .addItem('📥 นำเข้าข้อมูลรถ+ประวัติซ่อมชุดเดิม (ครั้งเดียว)', 'seedVehiclesFromLegacyData')
     .addItem('👤 สร้างชีตผู้ใช้งาน + PIN (Users)', 'setupUsersSheet')
+    .addItem('🆙 อัปเกรดระบบ v3 (สเปก/รอบเปลี่ยนถ่าย/เติมน้ำมัน/สิทธิ์)', 'upgradeSystemV3')
     .addItem('⏰ ตั้งเวลาแจ้งเตือนอัตโนมัติทุกวัน', 'setupDailyTrigger')
     .addItem('📨 ทดสอบส่งแจ้งเตือน LINE ตอนนี้', 'checkExpiryAndNotify')
     .addToUi();
+}
+
+/**
+ * รันครั้งเดียวสำหรับระบบที่ติดตั้งอยู่แล้ว (v2 → v3):
+ * 1. เพิ่มคอลัมน์สเปกประจำรถในชีต Vehicles
+ * 2. สร้างชีต Schedules (รอบเปลี่ยนถ่าย) + Fuel (เติมน้ำมัน/แก๊ส)
+ * 3. เพิ่มคอลัมน์ "บทบาท" ในชีต Users
+ * รันซ้ำได้ ไม่ทำข้อมูลเดิมเสีย
+ */
+function upgradeSystemV3() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 1. คอลัมน์สเปกใน Vehicles
+  var vehicles = getSheet_(CONFIG.SHEET_VEHICLES);
+  ensureSheetColumns_(vehicles, VEHICLE_HEADERS);
+
+  // 2. ชีตใหม่
+  var schedules = ss.getSheetByName(CONFIG.SHEET_SCHEDULES);
+  if (!schedules) {
+    schedules = ss.insertSheet(CONFIG.SHEET_SCHEDULES);
+    setupHeaderRow_(schedules, SCHEDULE_HEADERS);
+    applyDropdown_(schedules, SCHEDULE_HEADERS.indexOf('รายการ') + 1, 500, CONFIG.SCHEDULE_ITEMS);
+  }
+  var fuel = ss.getSheetByName(CONFIG.SHEET_FUEL);
+  if (!fuel) {
+    fuel = ss.insertSheet(CONFIG.SHEET_FUEL);
+    setupHeaderRow_(fuel, FUEL_HEADERS);
+    applyDropdown_(fuel, FUEL_HEADERS.indexOf('ชนิดเชื้อเพลิง') + 1, 1000, CONFIG.FUEL_TYPES);
+  }
+
+  // 3. บทบาทใน Users
+  var users = ss.getSheetByName(CONFIG.SHEET_USERS);
+  if (users) ensureUsersRoleColumn_(users);
+
+  SpreadsheetApp.getUi().alert(
+    'อัปเกรดระบบ v3 เรียบร้อย ✅\n\n' +
+    '1. Vehicles: เพิ่มคอลัมน์สเปกประจำรถ (น้ำมันเครื่อง/กรอง/ยาง/แบตเตอรี่ ฯลฯ)\n' +
+    '2. สร้างชีต Schedules (รอบเปลี่ยนถ่าย) และ Fuel (เติมน้ำมัน/แก๊ส)\n' +
+    '3. Users: เพิ่มคอลัมน์ "บทบาท" — กรุณาตั้งบทบาทให้ทุกคน:\n' +
+    '    • เจ้าของ = เฟิร์น, ภูมิ (แก้ พรบ./ประกัน/ภาษี ได้)\n' +
+    '    • แอดมิน / DSR = บันทึกซ่อม เปลี่ยนถ่าย แก้รายละเอียดรถ\n' +
+    '    • คนขับ = บันทึกเติมน้ำมัน/แก๊สอย่างเดียว\n' +
+    '    ⚠️ คนที่ยังไม่ตั้งบทบาท ระบบจะถือเป็น "คนขับ" อัตโนมัติ\n\n' +
+    'จากนั้น Deploy เว็บแอปเวอร์ชันใหม่ (Manage deployments > Edit > New version)'
+  );
+}
+
+/** เพิ่มคอลัมน์หัวตารางที่ยังไม่มีต่อท้ายชีต (ใช้ตอนอัปเกรดโครงสร้าง) */
+function ensureSheetColumns_(sheet, headers) {
+  var lastCol = sheet.getLastColumn();
+  var existing = lastCol > 0 ? sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(String) : [];
+  var missing = headers.filter(function (h) { return existing.indexOf(h) === -1; });
+  if (missing.length === 0) return;
+  if (sheet.getMaxColumns() < existing.length + missing.length) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), existing.length + missing.length - sheet.getMaxColumns());
+  }
+  sheet.getRange(1, existing.length + 1, 1, missing.length).setValues([missing])
+    .setFontWeight('bold').setBackground('#e8551c').setFontColor('#ffffff');
 }
 
 /**
@@ -274,6 +362,14 @@ function setupSheets() {
   var maintenance = ss.getSheetByName(CONFIG.SHEET_MAINTENANCE) || ss.insertSheet(CONFIG.SHEET_MAINTENANCE);
   setupHeaderRow_(maintenance, MAINTENANCE_HEADERS);
   setupMaintenanceValidation_(maintenance);
+
+  var schedules = ss.getSheetByName(CONFIG.SHEET_SCHEDULES) || ss.insertSheet(CONFIG.SHEET_SCHEDULES);
+  setupHeaderRow_(schedules, SCHEDULE_HEADERS);
+  applyDropdown_(schedules, SCHEDULE_HEADERS.indexOf('รายการ') + 1, 500, CONFIG.SCHEDULE_ITEMS);
+
+  var fuel = ss.getSheetByName(CONFIG.SHEET_FUEL) || ss.insertSheet(CONFIG.SHEET_FUEL);
+  setupHeaderRow_(fuel, FUEL_HEADERS);
+  applyDropdown_(fuel, FUEL_HEADERS.indexOf('ชนิดเชื้อเพลิง') + 1, 1000, CONFIG.FUEL_TYPES);
 
   var settings = ss.getSheetByName(CONFIG.SHEET_SETTINGS) || ss.insertSheet(CONFIG.SHEET_SETTINGS);
   setupSettingsSheet_(settings);
@@ -405,6 +501,7 @@ function doGet(e) {
 // Deploy: Execute as: Me / Who has access: Anyone (ทุกคน ไม่ต้องล็อกอิน Google)
 // ------------------------------------------------------------
 var API_USER_NAME = ''; // ชื่อผู้ใช้ที่ผ่าน token แล้ว (ตั้งค่าโดย handleApi_)
+var API_USER_ROLE = ''; // บทบาทของผู้ใช้ ('' = เรียกจากเมนู/script editor = สิทธิ์เต็ม)
 
 function doPost(e) {
   var out;
@@ -426,9 +523,10 @@ function handleApi_(req) {
   var user = validateToken_(req.token);
   if (!user) return { success: false, error: 'UNAUTHORIZED' };
   API_USER_NAME = user.name;
+  API_USER_ROLE = user.role;
 
   var fns = {
-    getUserInfo: function () { return { success: true, data: { email: user.name } }; },
+    getUserInfo: function () { return { success: true, data: { email: user.name, name: user.name, role: user.role } }; },
     logout: function () { revokeToken_(req.token); return { success: true }; },
     getAllVehicles: getAllVehicles,
     addVehicle: addVehicle,
@@ -437,10 +535,39 @@ function handleApi_(req) {
     getMaintenanceLogs: getMaintenanceLogs,
     addMaintenanceLog: addMaintenanceLog,
     getDashboardData: getDashboardData,
-    uploadAttachment: uploadAttachment
+    uploadAttachment: uploadAttachment,
+    getSchedules: getSchedules,
+    saveSchedule: saveSchedule,
+    deleteSchedule: deleteSchedule,
+    getFuelLogs: getFuelLogs,
+    addFuelLog: addFuelLog
   };
   if (!fns[req.action]) return { success: false, error: 'ไม่รู้จักคำสั่ง: ' + req.action };
+  if (!roleAllows_(user.role, req.action)) {
+    return { success: false, error: 'FORBIDDEN: บทบาท "' + user.role + '" ไม่มีสิทธิ์ทำรายการนี้' };
+  }
   return fns[req.action].apply(null, args);
+}
+
+// ---------- สิทธิ์ตามบทบาท ----------
+// เจ้าของ (เฟิร์น/ภูมิ): ทุกอย่าง รวม พรบ./ประกัน/ภาษี/เพิ่ม-ลบรถ
+// แอดมิน + DSR: บันทึกซ่อม/เปลี่ยนถ่าย/สเปก/รอบเปลี่ยนถ่าย/แก้รายละเอียดทั่วไปของรถ
+// คนขับ: ดูข้อมูล + บันทึกเติมน้ำมัน/แก๊สเท่านั้น
+var ACTION_PERMISSIONS = {
+  addVehicle: ['เจ้าของ'],
+  deleteVehicle: ['เจ้าของ'],
+  updateVehicle: ['เจ้าของ', 'แอดมิน', 'DSR'], // ฟิลด์ พรบ./ประกัน/ภาษี ถูกกรองอีกชั้นใน updateVehicle
+  addMaintenanceLog: ['เจ้าของ', 'แอดมิน', 'DSR'],
+  saveSchedule: ['เจ้าของ', 'แอดมิน', 'DSR'],
+  deleteSchedule: ['เจ้าของ', 'แอดมิน', 'DSR'],
+  uploadAttachment: ['เจ้าของ', 'แอดมิน', 'DSR']
+  // action ที่ไม่อยู่ในลิสต์ = อ่านข้อมูล/เติมน้ำมัน อนุญาตทุกบทบาท
+};
+
+function roleAllows_(role, action) {
+  var allowed = ACTION_PERMISSIONS[action];
+  if (!allowed) return true;
+  return allowed.indexOf(role) !== -1;
 }
 
 // ---------- PIN LOGIN + TOKEN ----------
@@ -463,7 +590,7 @@ function apiLogin_(pin) {
     'tok_' + token, JSON.stringify({ name: user.name, exp: exp })
   );
   pruneExpiredTokens_();
-  return { success: true, data: { token: token, name: user.name } };
+  return { success: true, data: { token: token, name: user.name, role: user.role } };
 }
 
 function findUserByPin_(pin) {
@@ -475,9 +602,27 @@ function findUserByPin_(pin) {
     var name = String(rows[i][0] || '').trim();
     var rowPin = String(rows[i][1] || '').trim();
     var status = String(rows[i][2] || '').trim();
-    if (name && rowPin && rowPin === pin && status !== 'ปิดใช้งาน') return { name: name };
+    if (name && rowPin && rowPin === pin && status !== 'ปิดใช้งาน') {
+      return { name: name, role: normalizeRole_(rows[i][3]) };
+    }
   }
   return null;
+}
+
+/** อ่านบทบาทสดจากชีต Users (คอลัมน์ 4) — เปลี่ยนในชีตแล้วมีผลทันทีไม่ต้องล็อกอินใหม่ */
+function getUserRole_(name) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_USERS);
+  if (!sheet) return 'คนขับ';
+  var rows = sheet.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][0] || '').trim() === name) return normalizeRole_(rows[i][3]);
+  }
+  return 'คนขับ';
+}
+
+function normalizeRole_(raw) {
+  var r = String(raw || '').trim();
+  return CONFIG.ROLES.indexOf(r) !== -1 ? r : 'คนขับ'; // ค่าว่าง/ไม่รู้จัก = สิทธิ์ต่ำสุด
 }
 
 function validateToken_(token) {
@@ -488,7 +633,7 @@ function validateToken_(token) {
     var t = JSON.parse(raw);
     if (t.exp < Date.now()) { revokeToken_(token); return null; }
     if (!isUserActive_(t.name)) { revokeToken_(token); return null; } // ปิดใช้งานในชีต = เตะออกทันที
-    return { name: t.name };
+    return { name: t.name, role: getUserRole_(t.name) }; // อ่านบทบาทสดทุกครั้ง
   } catch (e) { return null; }
 }
 
@@ -525,16 +670,30 @@ function setupUsersSheet() {
   var sheet = ss.getSheetByName(CONFIG.SHEET_USERS);
   if (!sheet) sheet = ss.insertSheet(CONFIG.SHEET_USERS);
   if (sheet.getLastRow() === 0) {
-    sheet.getRange(1, 1, 1, 3).setValues([['ชื่อผู้ใช้', 'PIN (6 หลัก)', 'สถานะ']])
+    sheet.getRange(1, 1, 1, 4).setValues([['ชื่อผู้ใช้', 'PIN (6 หลัก)', 'สถานะ', 'บทบาท']])
       .setFontWeight('bold').setBackground('#e8551c').setFontColor('#ffffff');
-    sheet.getRange(2, 1, 1, 3).setValues([['ตัวอย่าง สมชาย', '123456', 'ปิดใช้งาน']]);
-    sheet.setColumnWidths(1, 3, 160);
+    sheet.getRange(2, 1, 1, 4).setValues([['ตัวอย่าง สมชาย', '123456', 'ปิดใช้งาน', 'คนขับ']]);
+    sheet.setColumnWidths(1, 4, 160);
     sheet.getRange(2, 3, 50, 1).setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(['เปิดใช้งาน', 'ปิดใช้งาน'], true).build()
     );
     sheet.getRange(2, 2, 51, 1).setNumberFormat('@'); // กัน PIN ที่ขึ้นต้นด้วย 0 กลายเป็นตัวเลข
   }
-  SpreadsheetApp.getUi().alert('สร้างชีต Users แล้ว\n\nเพิ่มชื่อ + PIN (ห้ามซ้ำกัน) แล้วตั้งสถานะ "เปิดใช้งาน"\nแถวตัวอย่างลบทิ้งได้เลย');
+  ensureUsersRoleColumn_(sheet);
+  SpreadsheetApp.getUi().alert('สร้างชีต Users แล้ว\n\nเพิ่มชื่อ + PIN (ห้ามซ้ำกัน) ตั้งสถานะ "เปิดใช้งาน" และเลือกบทบาท\n(เจ้าของ = เฟิร์น/ภูมิ, แอดมิน/DSR = บันทึกซ่อม, คนขับ = เติมน้ำมันอย่างเดียว)\nแถวตัวอย่างลบทิ้งได้เลย');
+}
+
+/** เพิ่มคอลัมน์ "บทบาท" ให้ชีต Users เดิม + dropdown (ค่าว่าง = คนขับ) */
+function ensureUsersRoleColumn_(sheet) {
+  var header = sheet.getRange(1, 4).getValue();
+  if (String(header).trim() !== 'บทบาท') {
+    sheet.getRange(1, 4).setValue('บทบาท')
+      .setFontWeight('bold').setBackground('#e8551c').setFontColor('#ffffff');
+    sheet.setColumnWidth(4, 160);
+  }
+  sheet.getRange(2, 4, Math.max(sheet.getMaxRows() - 1, 50), 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(CONFIG.ROLES, true).setAllowInvalid(false).build()
+  );
 }
 
 function getActiveUserName_() {
@@ -611,6 +770,7 @@ function getAllVehicles() {
 function addVehicle(data) {
   try {
     var sheet = getSheet_(CONFIG.SHEET_VEHICLES);
+    ensureSheetColumns_(sheet, VEHICLE_HEADERS);
     var col = headerIndexMap_(VEHICLE_HEADERS);
     var newId = 'V' + Utilities.formatString('%04d', getNextRowCount_(sheet) + 1);
     var row = new Array(VEHICLE_HEADERS.length).fill('');
@@ -635,6 +795,20 @@ function updateVehicle(id, data) {
     var col = headerIndexMap_(VEHICLE_HEADERS);
     var rowIndex = findRowById_(sheet, col['ID'], id);
     if (!rowIndex) return { success: false, error: 'ไม่พบรถรหัส ' + id };
+
+    // บทบาทที่ไม่ใช่เจ้าของ ห้ามแก้ฟิลด์สำคัญ (พรบ./ประกัน/ภาษี/ทะเบียน)
+    var isOwner = !API_USER_ROLE || API_USER_ROLE === 'เจ้าของ'; // '' = เรียกจากเมนู/สคริปต์
+    if (!isOwner) {
+      var blocked = Object.keys(data).filter(function (h) {
+        return PROTECTED_VEHICLE_FIELDS.indexOf(h) !== -1;
+      });
+      blocked.forEach(function (h) { delete data[h]; });
+      if (Object.keys(data).length === 0) {
+        return { success: false, error: 'FORBIDDEN: ฟิลด์ ' + blocked.join(', ') + ' แก้ไขได้เฉพาะเจ้าของ' };
+      }
+    }
+
+    ensureSheetColumns_(sheet, VEHICLE_HEADERS);
     Object.keys(data).forEach(function (h) {
       if (col[h]) sheet.getRange(rowIndex, col[h]).setValue(data[h]);
     });
@@ -693,6 +867,13 @@ function addMaintenanceLog(data) {
     if (data['เลขไมล์ ณ วันที่ทำ'] && data['ทะเบียนรถ']) {
       updateVehicleMileageIfNewer_(data['ทะเบียนรถ'], data['เลขไมล์ ณ วันที่ทำ']);
     }
+
+    // ถ้างานนี้ตรงกับรายการรอบเปลี่ยนถ่ายของรถคันนี้ → อัปเดต "ทำล่าสุด" และคำนวณครบกำหนดใหม่
+    try {
+      updateScheduleFromLog_(data['ทะเบียนรถ'], data['วันที่บันทึก'], data['เลขไมล์ ณ วันที่ทำ'],
+        (data['ประเภทงาน'] || '') + ' ' + (data['รายละเอียด'] || ''));
+    } catch (se) { console.error('updateScheduleFromLog_ error:', se); }
+
     return { success: true, data: { id: newId } };
   } catch (e) {
     console.error('addMaintenanceLog error:', e);
@@ -709,6 +890,226 @@ function updateVehicleMileageIfNewer_(plate, mileage) {
   if (!current || Number(mileage) > Number(current)) {
     sheet.getRange(rowIndex, col['เลขไมล์ล่าสุด']).setValue(mileage);
     sheet.getRange(rowIndex, col['วันที่บันทึกไมล์']).setValue(new Date());
+  }
+}
+
+// ------------------------------------------------------------
+// SCHEDULES — รอบเปลี่ยนถ่าย/บำรุงรักษาตามระยะ (v3)
+// ------------------------------------------------------------
+function getSchedules(vehiclePlate) {
+  try {
+    var sheet = getSheet_(CONFIG.SHEET_SCHEDULES);
+    var rows = readAllRows_(sheet, SCHEDULE_HEADERS);
+    if (vehiclePlate) rows = rows.filter(function (r) { return r['ทะเบียนรถ'] === vehiclePlate; });
+
+    // สถานะครบกำหนดของแต่ละรายการ (เทียบวันนี้ + เลขไมล์ล่าสุดของรถ)
+    var mileages = getLatestMileages_();
+    var today = stripTime_(new Date());
+    rows.forEach(function (r) {
+      var dueInfo = enrichExpiry_(r['ครบกำหนด (วันที่)'], today);
+      var curKm = Number(mileages[r['ทะเบียนรถ']] || 0);
+      var dueKm = Number(r['ครบกำหนด (ไมล์)'] || 0);
+      var kmLeft = (dueKm && curKm) ? dueKm - curKm : null;
+      r._daysLeft = dueInfo.daysLeft;
+      r._kmLeft = kmLeft;
+      r._currentKm = curKm || null;
+      var dueByDate = dueInfo.daysLeft !== null && dueInfo.daysLeft <= 0;
+      var dueByKm = kmLeft !== null && kmLeft <= 0;
+      var warnByDate = dueInfo.daysLeft !== null && dueInfo.daysLeft <= 30;
+      var warnByKm = kmLeft !== null && kmLeft <= CONFIG.SCHEDULE_KM_WARN;
+      r._dueStatus = (dueByDate || dueByKm) ? 'due' : (warnByDate || warnByKm) ? 'soon' : 'ok';
+    });
+    rows.sort(function (a, b) {
+      var rank = { due: 0, soon: 1, ok: 2 };
+      return rank[a._dueStatus] - rank[b._dueStatus];
+    });
+    return { success: true, data: serializeDates_(rows) };
+  } catch (e) {
+    console.error('getSchedules error:', e);
+    return { success: false, error: e.toString() };
+  }
+}
+
+/** เพิ่ม/แก้ไขรอบเปลี่ยนถ่าย — ถ้ามี data.ID = แก้ไข, ไม่มี = เพิ่มใหม่ */
+function saveSchedule(data) {
+  try {
+    var sheet = getSheet_(CONFIG.SHEET_SCHEDULES);
+    var col = headerIndexMap_(SCHEDULE_HEADERS);
+
+    // คำนวณครบกำหนดจาก "ทำล่าสุด" + "ทุกๆ"
+    var computed = computeScheduleDue_(data);
+    data['ครบกำหนด (วันที่)'] = computed.dueDate;
+    data['ครบกำหนด (ไมล์)'] = computed.dueKm;
+
+    if (data['ID']) {
+      var rowIndex = findRowById_(sheet, col['ID'], data['ID']);
+      if (!rowIndex) return { success: false, error: 'ไม่พบรายการรหัส ' + data['ID'] };
+      SCHEDULE_HEADERS.forEach(function (h) {
+        if (h === 'ID' || data[h] === undefined) return;
+        sheet.getRange(rowIndex, col[h]).setValue(data[h]);
+      });
+      sheet.getRange(rowIndex, col['อัปเดตล่าสุดโดย']).setValue(getActiveUserName_());
+      sheet.getRange(rowIndex, col['อัปเดตล่าสุดเมื่อ']).setValue(new Date());
+      return { success: true, data: { id: data['ID'] } };
+    }
+
+    var newId = 'S' + Utilities.formatString('%05d', getNextRowCount_(sheet) + 1);
+    var row = new Array(SCHEDULE_HEADERS.length).fill('');
+    row[col['ID'] - 1] = newId;
+    SCHEDULE_HEADERS.forEach(function (h) {
+      if (h === 'ID') return;
+      if (data[h] !== undefined) row[col[h] - 1] = data[h];
+    });
+    row[col['อัปเดตล่าสุดโดย'] - 1] = getActiveUserName_();
+    row[col['อัปเดตล่าสุดเมื่อ'] - 1] = new Date();
+    sheet.appendRow(row);
+    return { success: true, data: { id: newId } };
+  } catch (e) {
+    console.error('saveSchedule error:', e);
+    return { success: false, error: e.toString() };
+  }
+}
+
+function deleteSchedule(id) {
+  try {
+    var sheet = getSheet_(CONFIG.SHEET_SCHEDULES);
+    var col = headerIndexMap_(SCHEDULE_HEADERS);
+    var rowIndex = findRowById_(sheet, col['ID'], id);
+    if (!rowIndex) return { success: false, error: 'ไม่พบรายการรหัส ' + id };
+    sheet.deleteRow(rowIndex);
+    return { success: true };
+  } catch (e) {
+    console.error('deleteSchedule error:', e);
+    return { success: false, error: e.toString() };
+  }
+}
+
+function computeScheduleDue_(data) {
+  var dueDate = '', dueKm = '';
+  var lastDate = data['ทำล่าสุด (วันที่)'] ? new Date(data['ทำล่าสุด (วันที่)']) : null;
+  var months = Number(data['ทุกๆ (เดือน)'] || 0);
+  if (lastDate && !isNaN(lastDate) && months > 0) {
+    dueDate = new Date(lastDate.getFullYear(), lastDate.getMonth() + months, lastDate.getDate());
+  }
+  var lastKm = Number(data['ทำล่าสุด (ไมล์)'] || 0);
+  var everyKm = Number(data['ทุกๆ (กม.)'] || 0);
+  if (lastKm > 0 && everyKm > 0) dueKm = lastKm + everyKm;
+  return { dueDate: dueDate, dueKm: dueKm };
+}
+
+/** เมื่อบันทึกงานซ่อม/เปลี่ยนถ่าย → หารายการรอบของรถคันนั้นที่ชื่อรายการปรากฏในงาน แล้วอัปเดตทำล่าสุด+ครบกำหนด */
+function updateScheduleFromLog_(plate, logDate, logKm, workText) {
+  if (!plate || !workText) return;
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_SCHEDULES);
+  if (!sheet) return;
+  var col = headerIndexMap_(SCHEDULE_HEADERS);
+  var rows = readAllRows_(sheet, SCHEDULE_HEADERS);
+  var d = logDate ? new Date(logDate) : new Date();
+
+  rows.forEach(function (r, i) {
+    if (r['ทะเบียนรถ'] !== plate) return;
+    var item = String(r['รายการ'] || '').trim();
+    if (!item || workText.indexOf(item) === -1) return;
+
+    var rowIndex = i + 2; // readAllRows_ กรองแถวว่างออก — หาแถวจริงจาก ID กันพลาด
+    var realRow = findRowById_(sheet, col['ID'], r['ID']);
+    if (realRow) rowIndex = realRow;
+
+    sheet.getRange(rowIndex, col['ทำล่าสุด (วันที่)']).setValue(d);
+    if (logKm) sheet.getRange(rowIndex, col['ทำล่าสุด (ไมล์)']).setValue(Number(logKm));
+
+    var computed = computeScheduleDue_({
+      'ทำล่าสุด (วันที่)': d,
+      'ทำล่าสุด (ไมล์)': logKm || r['ทำล่าสุด (ไมล์)'],
+      'ทุกๆ (เดือน)': r['ทุกๆ (เดือน)'],
+      'ทุกๆ (กม.)': r['ทุกๆ (กม.)']
+    });
+    sheet.getRange(rowIndex, col['ครบกำหนด (วันที่)']).setValue(computed.dueDate);
+    sheet.getRange(rowIndex, col['ครบกำหนด (ไมล์)']).setValue(computed.dueKm);
+    sheet.getRange(rowIndex, col['อัปเดตล่าสุดโดย']).setValue(getActiveUserName_() + ' (อัตโนมัติจากบันทึกซ่อม)');
+    sheet.getRange(rowIndex, col['อัปเดตล่าสุดเมื่อ']).setValue(new Date());
+  });
+}
+
+/** เลขไมล์ล่าสุดของทุกคัน { ทะเบียน: ไมล์ } */
+function getLatestMileages_() {
+  var sheet = getSheet_(CONFIG.SHEET_VEHICLES);
+  var rows = readAllRows_(sheet, VEHICLE_HEADERS);
+  var map = {};
+  rows.forEach(function (r) {
+    if (r['ทะเบียนรถ']) map[r['ทะเบียนรถ']] = Number(r['เลขไมล์ล่าสุด'] || 0);
+  });
+  return map;
+}
+
+// ------------------------------------------------------------
+// FUEL — บันทึกเติมน้ำมัน/แก๊ส (v3)
+// ------------------------------------------------------------
+function getFuelLogs(vehiclePlate) {
+  try {
+    var sheet = getSheet_(CONFIG.SHEET_FUEL);
+    var rows = readAllRows_(sheet, FUEL_HEADERS);
+    if (vehiclePlate) rows = rows.filter(function (r) { return r['ทะเบียนรถ'] === vehiclePlate; });
+    rows.sort(function (a, b) { return new Date(b['วันที่']) - new Date(a['วันที่']); });
+
+    // อัตราสิ้นเปลือง: กม./ลิตร ระหว่างการเติม "เต็มถัง" 2 ครั้งติดกันของคันเดียวกัน
+    var byPlate = {};
+    rows.slice().reverse().forEach(function (r) { // เก่า → ใหม่
+      var p = r['ทะเบียนรถ'];
+      if (!byPlate[p]) byPlate[p] = [];
+      byPlate[p].push(r);
+    });
+    Object.keys(byPlate).forEach(function (p) {
+      var prevFull = null;
+      byPlate[p].forEach(function (r) {
+        var isFull = String(r['เต็มถัง']) === 'true' || r['เต็มถัง'] === true || r['เต็มถัง'] === '✓';
+        var km = Number(r['เลขไมล์'] || 0);
+        var liters = Number(r['จำนวนลิตร'] || 0);
+        if (isFull && km > 0) {
+          if (prevFull && km > prevFull.km && liters > 0) {
+            r._kmPerLiter = Math.round(((km - prevFull.km) / liters) * 100) / 100;
+          }
+          prevFull = { km: km };
+        }
+      });
+    });
+    return { success: true, data: serializeDates_(rows) };
+  } catch (e) {
+    console.error('getFuelLogs error:', e);
+    return { success: false, error: e.toString() };
+  }
+}
+
+function addFuelLog(data) {
+  try {
+    var sheet = getSheet_(CONFIG.SHEET_FUEL);
+    var col = headerIndexMap_(FUEL_HEADERS);
+    var newId = 'F' + Utilities.formatString('%05d', getNextRowCount_(sheet) + 1);
+
+    // คำนวณราคา/ลิตรอัตโนมัติถ้าไม่ได้กรอก
+    var liters = Number(data['จำนวนลิตร'] || 0);
+    var amount = Number(data['จำนวนเงิน (บาท)'] || 0);
+    if (!data['ราคา/ลิตร'] && liters > 0 && amount > 0) {
+      data['ราคา/ลิตร'] = Math.round((amount / liters) * 100) / 100;
+    }
+    if (!data['วันที่']) data['วันที่'] = new Date();
+
+    var row = new Array(FUEL_HEADERS.length).fill('');
+    row[col['ID'] - 1] = newId;
+    FUEL_HEADERS.forEach(function (h) {
+      if (h === 'ID') return;
+      if (data[h] !== undefined) row[col[h] - 1] = data[h];
+    });
+    row[col['ผู้บันทึก'] - 1] = getActiveUserName_();
+    sheet.appendRow(row);
+
+    if (data['เลขไมล์'] && data['ทะเบียนรถ']) {
+      updateVehicleMileageIfNewer_(data['ทะเบียนรถ'], data['เลขไมล์']);
+    }
+    return { success: true, data: { id: newId } };
+  } catch (e) {
+    console.error('addFuelLog error:', e);
+    return { success: false, error: e.toString() };
   }
 }
 
@@ -839,14 +1240,42 @@ function checkExpiryAndNotify() {
       });
     });
 
-    if (lines.length === 0) {
+    // ── รอบเปลี่ยนถ่าย/บำรุงรักษา (v3) ──
+    var schedLines = [];
+    try {
+      var schedResp = getSchedules('');
+      if (schedResp.success) {
+        schedResp.data.forEach(function (s) {
+          if (s._dueStatus === 'ok') return;
+          var parts = [];
+          if (s._daysLeft !== null && s._daysLeft !== undefined) {
+            parts.push(s._daysLeft < 0 ? 'เลยกำหนด ' + Math.abs(s._daysLeft) + ' วัน' : 'อีก ' + s._daysLeft + ' วัน');
+          }
+          if (s._kmLeft !== null && s._kmLeft !== undefined) {
+            parts.push(s._kmLeft < 0 ? 'เลยระยะ ' + Math.abs(s._kmLeft).toLocaleString() + ' กม.' : 'อีก ' + s._kmLeft.toLocaleString() + ' กม.');
+          }
+          var icon = s._dueStatus === 'due' ? '🔴' : '🟡';
+          // แจ้งเฉพาะเมื่อครบกำหนด หรือวันที่เข้ารอบ threshold เดียวกับ พรบ./ประกัน (กันสแปมรายวัน)
+          var dateInWindow = s._daysLeft !== null && (s._daysLeft < 0 || thresholds.indexOf(s._daysLeft) !== -1);
+          var kmInWindow = s._kmLeft !== null && s._kmLeft <= CONFIG.SCHEDULE_KM_WARN;
+          if (s._dueStatus === 'due' || dateInWindow || kmInWindow) {
+            schedLines.push(icon + ' ' + s['ทะเบียนรถ'] + ' - ' + s['รายการ'] + ' (' + parts.join(', ') + ')');
+          }
+        });
+      }
+    } catch (se) { console.error('schedule notify error:', se); }
+
+    if (lines.length === 0 && schedLines.length === 0) {
       console.log('checkExpiryAndNotify: ไม่มีรายการที่ต้องแจ้งเตือนวันนี้');
       return;
     }
 
     var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
-    var message = '📋 สรุปแจ้งเตือนรถยนต์ วันที่ ' + today + '\n\n' + lines.join('\n') +
-      '\n\n💡 เช็ครายละเอียดและจัดกลุ่มต่อพร้อมกันได้ที่หน้าเว็บระบบจัดการรถ';
+    var message = '📋 สรุปแจ้งเตือนรถยนต์ วันที่ ' + today + '\n\n' + lines.join('\n');
+    if (schedLines.length) {
+      message += (lines.length ? '\n\n' : '') + '🔧 ใกล้ครบรอบเปลี่ยนถ่าย/บำรุงรักษา\n' + schedLines.join('\n');
+    }
+    message += '\n\n💡 เช็ครายละเอียดและจัดกลุ่มต่อพร้อมกันได้ที่หน้าเว็บระบบจัดการรถ';
     sendLineMessage_(message);
   } catch (e) {
     console.error('checkExpiryAndNotify error:', e);
@@ -888,7 +1317,9 @@ function getSheet_(name) {
 function readAllRows_(sheet, headers) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
-  var values = sheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+  // อ่านเท่าที่ชีตมีจริง กันพังกรณียังไม่ได้รันอัปเกรดเพิ่มคอลัมน์ใหม่
+  var numCols = Math.min(headers.length, sheet.getMaxColumns());
+  var values = sheet.getRange(2, 1, lastRow - 1, numCols).getValues();
   return values
     .filter(function (row) { return row.join('') !== ''; })
     .map(function (row) {
