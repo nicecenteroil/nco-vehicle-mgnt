@@ -822,6 +822,102 @@
 /* ================= API BRIDGE (แทน google.script.run) ================= */
 var API_URL = 'https://script.google.com/macros/s/AKfycbxcE1AKXtMWF57UACMiSgJTO4GOMVNbbGvnLhArXCgmnpedCiEJm_gDxrY4-aXx0SnI/exec'; // ลิงก์ Web App /exec จากการ Deploy GAS
 
+/* --------------------------------------------------------------------------
+   ทำไมต้องมีชั้นนี้:
+   Apps Script ตอบ POST ด้วยการ redirect ไป script.googleusercontent.com
+   บางครั้ง redirect นั้นล้ม (404 / ERR_FAILED) หน้า error ของ Google ไม่มี
+   header CORS เบราว์เซอร์จึงรายงานเป็น "blocked by CORS / Failed to fetch"
+   ทั้งที่เซิร์ฟเวอร์ไม่ได้พัง  →  แก้ด้วย auto-retry + แคชข้อมูลล่าสุด
+   งานที่ "เขียนข้อมูล" ส่ง reqId ไปด้วย ฝั่ง Code.gs จะกันบันทึกซ้ำให้
+-------------------------------------------------------------------------- */
+var API_TIMEOUT_MS = 40000;
+var API_RETRY_DELAYS = [700, 1800, 3500];   // ลองใหม่ 3 ครั้ง
+var API_READ_ACTIONS = { getUserInfo:1, getAllVehicles:1, getDashboardData:1,
+  getMaintenanceLogs:1, getSchedules:1, getFuelLogs:1 };
+
+/* ---- แถบแจ้งสถานะการเชื่อมต่อ (สร้างเองด้วย JS ไม่ต้องแก้ CSS) ---- */
+function apiBanner(msg, kind){
+  var b = document.getElementById('apiBanner');
+  if (!b){
+    b = document.createElement('div');
+    b.id = 'apiBanner';
+    b.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:9999;padding:7px 12px;' +
+      'font-size:13px;text-align:center;font-family:inherit;cursor:pointer;' +
+      'box-shadow:0 2px 8px rgba(0,0,0,.25);transition:opacity .2s';
+    b.onclick = function(){ location.reload(); };
+    document.body.appendChild(b);
+  }
+  var c = { warn:['#7a5200','#ffd479'], stale:['#334155','#e2e8f0'], err:['#7f1d1d','#fecaca'] }[kind] || ['#334155','#e2e8f0'];
+  b.style.background = c[0]; b.style.color = c[1];
+  b.innerText = msg;
+  b.style.display = 'block';
+}
+function apiBannerHide(){
+  var b = document.getElementById('apiBanner');
+  if (b) b.style.display = 'none';
+}
+
+/* ---- แคชผลลัพธ์ล่าสุดของงานอ่านข้อมูล ---- */
+function apiCacheKey(body){
+  try { return 'vhc_' + body.action + '_' + JSON.stringify(body.args || []); }
+  catch(e){ return 'vhc_' + body.action; }
+}
+function apiCacheSet(body, res){
+  try { localStorage.setItem(apiCacheKey(body), JSON.stringify({ t: Date.now(), res: res })); } catch(e){}
+}
+function apiCacheGet(body){
+  try { var raw = localStorage.getItem(apiCacheKey(body)); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
+}
+function apiAgo(ts){
+  var m = Math.round((Date.now() - ts) / 60000);
+  if (m < 1) return 'เมื่อครู่นี้';
+  if (m < 60) return m + ' นาทีที่แล้ว';
+  var h = Math.round(m / 60);
+  if (h < 24) return h + ' ชม.ที่แล้ว';
+  return new Date(ts).toLocaleString('th-TH');
+}
+
+function apiUid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+/* ---- ตัวยิง API หลัก: retry อัตโนมัติ + timeout ---- */
+function apiCall(body){
+  var total = API_RETRY_DELAYS.length;
+  function attempt(i){
+    var ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function(){ ctl.abort(); }, API_TIMEOUT_MS) : null;
+    var opt = { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+                body: JSON.stringify(body), cache:'no-store' };
+    if (ctl) opt.signal = ctl.signal;
+    return fetch(API_URL, opt)
+      .then(function(r){
+        if (timer) clearTimeout(timer);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(function(txt){
+        var j;
+        try { j = JSON.parse(txt); } catch(e){ throw new Error('คำตอบจากเซิร์ฟเวอร์ผิดรูปแบบ'); }
+        return j;
+      })
+      .catch(function(err){
+        if (timer) clearTimeout(timer);
+        if (i < total){
+          apiBanner('เชื่อมต่อไม่ได้ กำลังลองใหม่ (' + (i + 1) + '/' + total + ')…', 'warn');
+          return new Promise(function(rs){ setTimeout(rs, API_RETRY_DELAYS[i]); })
+            .then(function(){ return attempt(i + 1); });
+        }
+        throw err;
+      });
+  }
+  return attempt(0).then(function(res){
+    apiBannerHide();
+    if (API_READ_ACTIONS[body.action] && res && res.success) apiCacheSet(body, res);
+    return res;
+  });
+}
+
 var google = { script: {} };
 (function(){
   var METHODS = ['getUserInfo','getAllVehicles','addVehicle','updateVehicle','deleteVehicle',
@@ -833,18 +929,41 @@ var google = { script: {} };
   METHODS.forEach(function(m){
     Runner.prototype[m] = function(){
       var self = this;
-      var body = { action: m, args: Array.prototype.slice.call(arguments), token: localStorage.getItem('vh_token') || '' };
-      fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
-        .then(function(r){ return r.json(); })
+      var body = { action: m, args: Array.prototype.slice.call(arguments),
+                   token: localStorage.getItem('vh_token') || '' };
+      if (!API_READ_ACTIONS[m]) body.reqId = apiUid();   // กันบันทึกซ้ำตอน retry
+      apiCall(body)
         .then(function(res){
           if (res && res.error === 'UNAUTHORIZED'){ vhLogout(true); return; }
           self._ok(res);
         })
-        .catch(function(e){ self._err(e); });
+        .catch(function(e){
+          // อ่านข้อมูลไม่ได้จริงๆ → ใช้ข้อมูลล่าสุดที่แคชไว้ ดีกว่าจอว่าง
+          var c = API_READ_ACTIONS[m] ? apiCacheGet(body) : null;
+          if (c && c.res){
+            apiBanner('ออฟไลน์ — แสดงข้อมูลล่าสุด ' + apiAgo(c.t) + ' (แตะเพื่อโหลดใหม่)', 'stale');
+            self._ok(c.res);
+            return;
+          }
+          if (!API_READ_ACTIONS[m]){
+            // งานเขียนข้อมูล: เซิร์ฟเวอร์อาจบันทึกสำเร็จแล้วแต่คำตอบหาย
+            // (reqId ฝั่ง Code.gs กันบันทึกซ้ำให้แล้ว) → ให้โหลดข้อมูลใหม่มาตรวจสอบ
+            apiBanner('บันทึกแล้วแต่แอปไม่ได้รับคำตอบ — แตะเพื่อโหลดข้อมูลใหม่ตรวจสอบ', 'warn');
+            return;
+          }
+          apiBanner('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ — แตะเพื่อลองใหม่', 'err');
+          self._err(e);
+        });
     };
   });
   Object.defineProperty(google.script, 'run', { get: function(){ return new Runner(); } });
 })();
+
+// กลับมาออนไลน์ / กลับมาเปิดแอป → ลองโหลดใหม่ให้เอง
+window.addEventListener('online', function(){
+  var b = document.getElementById('apiBanner');
+  if (b && b.style.display !== 'none') location.reload();
+});
 
 /* ================= PIN LOGIN ================= */
 function showLogin(){
@@ -860,9 +979,7 @@ function submitLogin(e){
   var pin = pinEl.value.trim();
   if (!pin) return;
   var btn = document.getElementById('loginBtn'); btn.classList.add('loading'); errEl.style.display = 'none';
-  fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: 'login', args: [pin] }) })
-    .then(function(r){ return r.json(); })
+  apiCall({ action: 'login', args: [pin] })
     .then(function(res){
       btn.classList.remove('loading');
       if (!res.success){ errEl.innerText = res.error || 'PIN ไม่ถูกต้อง'; errEl.style.display = 'block'; pinEl.value = ''; pinEl.focus(); return; }
