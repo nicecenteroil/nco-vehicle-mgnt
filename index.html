@@ -559,6 +559,96 @@
     #loginForm{width:100%;max-width:300px;}
     #pinInput{text-align:center;font-size:22px;letter-spacing:10px;font-weight:800;}
     #loginError{display:none;margin:0 0 12px;color:var(--red);background:var(--red-soft);border-radius:12px;padding:10px 14px;font-size:13px;text-align:center;}
+      /* ============ ลานจอด 3D (v5) ============ */
+    .lot-card{background:var(--card);border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:var(--shadow-card);margin-bottom:6px;}
+    .lot-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;padding:14px 16px 10px;}
+    .lot-title{font-size:17px;font-weight:800;color:var(--text-1);letter-spacing:.2px;}
+    .lot-title b{color:var(--accent);}
+    .lot-sub{font-size:12px;color:var(--text-3);margin-top:2px;font-weight:600;}
+    .lot-chips{display:flex;gap:6px;flex-wrap:wrap;}
+    .lot-chip{border:1px solid var(--border-strong);background:var(--card-2);color:var(--text-2);border-radius:999px;padding:5px 11px;font:700 12px inherit;font-family:inherit;cursor:pointer;transition:.2s;}
+    .lot-chip b{margin-left:4px;color:var(--text-1);}
+    .lot-chip.red b{color:var(--red);} .lot-chip.amber b{color:var(--amber-text);}
+    .lot-chip.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);}
+    .lot-wrap{position:relative;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+    .lot-wrap::-webkit-scrollbar{display:none;}
+    .lot-stage{min-width:760px;transition:transform .25s ease-out;transform-origin:50% 60%;}
+    .lot-stage svg{display:block;width:100%;height:auto;}
+    .lot-car{cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),filter .2s,opacity .3s;transform-box:fill-box;transform-origin:50% 100%;}
+    .lot-car:hover{transform:translateY(-4px) scale(1.04);filter:brightness(1.12) drop-shadow(0 0 6px rgba(255,138,76,.55));}
+    .lot-car.inactive{opacity:.42;filter:grayscale(.7);}
+    .lot-wrap.f .lot-car:not(.t-urgent):not(.t-service){opacity:.18;filter:grayscale(1);}
+    .lot-wrap.f.t-urgent .lot-car.t-service:not(.t-urgent){opacity:.18;filter:grayscale(1);}
+    .lot-wrap.f.t-service .lot-car.t-urgent:not(.t-service){opacity:.18;filter:grayscale(1);}
+    .lot-wrap.f.t-urgent .lot-pin:not(.urgent),.lot-wrap.f.t-service .lot-pin.urgent{display:none;}
+    .lot-pin{cursor:pointer;animation:pinBob 2.2s ease-in-out infinite;transform-box:fill-box;}
+    .lot-pin.urgent path{filter:drop-shadow(0 0 4px rgba(255,90,90,.8));}
+    @keyframes pinBob{0%,100%{translate:0 0;}50%{translate:0 -3px;}}
+    .lot-tip{position:absolute;z-index:5;width:170px;pointer-events:none;opacity:0;transform:translateY(4px);transition:.18s;
+      background:var(--sheet-bg);border:1px solid var(--border-strong);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow-pop);}
+    .lot-tip.show{opacity:1;transform:none;}
+    .lt-plate{display:inline-block;background:#fff;color:#1d232b;border:1.5px solid #1d232b;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13px;}
+    .lt-model{font-size:12px;font-weight:700;color:var(--text-1);margin:6px 0 4px;}
+    .lt-row{font-size:11.5px;color:var(--text-2);margin-top:3px;}
+    .lot-hint{font-size:11px;color:var(--text-4);padding:8px 16px 12px;font-weight:600;}
+    @media (prefers-reduced-motion:reduce){.lot-pin{animation:none;}.lot-stage{transition:none;}}
+
+    /* ============ รอบต่อภาษี ============ */
+    .rg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;}
+    .rg-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-card);}
+    .rg-top{padding:12px 14px 10px;background:linear-gradient(135deg,color-mix(in srgb,var(--rg) 26%,transparent),transparent 75%);border-top:4px solid var(--rg);}
+    .rg-name{font-size:16px;font-weight:800;color:var(--text-1);display:flex;align-items:center;gap:8px;}
+    .rg-name span{font-size:11px;font-weight:800;color:var(--rg);background:color-mix(in srgb,var(--rg) 18%,transparent);border-radius:999px;padding:2px 9px;}
+    .rg-when{font-size:12.5px;color:var(--text-2);margin-top:6px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .rg-when b{color:var(--text-1);}
+    .rg-dead{font-size:12px;color:var(--text-3);margin-top:3px;font-weight:600;}
+    .rg-dead b{color:var(--red);}
+    .rg-cd{font-size:11px;font-weight:800;border-radius:8px;padding:2px 8px;background:var(--card-2);color:var(--text-1);}
+    .rg-cd.red{background:var(--red-soft);color:var(--red);}
+    .rg-ok{color:var(--green);font-weight:800;}
+    .rg-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--border);cursor:pointer;transition:background .15s;}
+    .rg-row:hover{background:var(--card-2);}
+    .rg-main{flex:1;min-width:0;}
+    .rg-plate{font-size:13.5px;font-weight:800;color:var(--text-1);}
+    .rg-owner{font-size:11px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .rg-dates{text-align:right;}
+    .rg-exp{font-size:12.5px;font-weight:800;color:var(--text-1);}
+    .rg-win{font-size:10.5px;color:var(--text-4);font-weight:600;}
+    .rg-st{font-size:10.5px;font-weight:800;border-radius:7px;padding:2px 7px;white-space:nowrap;}
+    .rg-st.red{background:var(--red-soft);color:var(--red);} .rg-st.amber{background:var(--amber-soft);color:var(--amber-text);}
+    .rg-st.green{background:var(--green-soft);color:var(--green);} .rg-st.gray{background:var(--gray-soft);color:var(--text-3);}
+    .rg-loose{font-size:12px;color:var(--text-3);margin-top:10px;font-weight:600;}
+    .rg-loose a{color:var(--accent);cursor:pointer;font-weight:700;}
+
+    /* ============ Leaderboard ============ */
+    .lb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+    .lb-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-card);}
+    .lb-head{position:relative;padding:11px 14px;font-size:13.5px;font-weight:800;color:var(--text-1);}
+    .lb-head::after{content:'';position:absolute;right:0;top:0;bottom:0;width:70px;opacity:.5;
+      background:repeating-conic-gradient(var(--text-2) 0 25%,transparent 0 50%) 0 0/12px 12px;
+      -webkit-mask:linear-gradient(90deg,transparent,#000);mask:linear-gradient(90deg,transparent,#000);}
+    .lb-row{display:flex;align-items:center;gap:9px;padding:7px 12px;border-top:1px solid var(--border);cursor:pointer;}
+    .lb-row:hover{background:var(--card-2);}
+    .lb-pos{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;background:var(--card-2);color:var(--text-3);flex-shrink:0;}
+    .lb-pos.p1{background:linear-gradient(135deg,#ffd76a,#e6a817);color:#3b2a00;}
+    .lb-pos.p2{background:linear-gradient(135deg,#eef1f4,#aab3bd);color:#2a3038;}
+    .lb-pos.p3{background:linear-gradient(135deg,#f0b48a,#b86b3c);color:#2e1606;}
+    .lb-main{flex:1;min-width:0;}
+    .lb-top{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-2);}
+    .lb-top b{color:var(--text-1);}
+    .lb-top span{font-weight:800;color:var(--text-1);}
+    .lb-bar{height:5px;border-radius:3px;background:var(--border);margin-top:5px;overflow:hidden;}
+    .lb-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent-deep),var(--accent-2));animation:lbGrow .9s cubic-bezier(.22,1,.36,1) both;}
+    @keyframes lbGrow{from{width:0;}}
+
+    /* ชิปรถเล็ก + ป้ายยี่ห้อแบบตัวอักษร (ยี่ห้อที่ไม่มีโลโก้ในคลัง เช่น Isuzu) */
+    .car-chip.xs{width:46px;height:34px;border-radius:10px;}
+    .car-chip.xs > img{width:46px;}
+    .car-chip.xs .brand-badge{display:none;}
+    .car-chip .brand-badge.txt{width:auto;padding:0 4px;}
+    .car-chip .brand-badge.own{background:transparent;overflow:hidden;}
+    .car-chip .brand-badge.own img{width:100%;height:100%;object-fit:cover;border-radius:5px;}
+    .car-chip .brand-badge.txt i{font-size:7px;letter-spacing:.3px;}
   </style>
 </head>
 <body>
@@ -739,6 +829,13 @@
       <div class="field"><label>เลขกรมธรรม์</label><input id="vf_policy"></div>
       <div class="field"><label>วันประกันหมดอายุ</label><div id="vf_ins_dates" class="date3"></div></div>
       <div class="field"><label>วันภาษี/ทะเบียนหมดอายุ</label><div id="vf_plate_dates" class="date3"></div></div>
+      <div class="f2">
+        <div class="field"><label>รอบต่อภาษี</label>
+          <select id="vf_rgroup"><option value="">-- ยังไม่จัดรอบ --</option><option value="ธ.ค.">รอบธันวา (ธ.ค.)</option><option value="มี.ค.">รอบมีนา (มี.ค.)</option><option value="ก.ค.">รอบกรกฎา (ก.ค.)</option></select>
+        </div>
+        <div class="field"><label>ผู้ถือกรรมสิทธิ์</label><input id="vf_owner" list="ownerList" placeholder="ชื่อตามเล่มทะเบียน"></div>
+      </div>
+      <datalist id="ownerList"><option>หจก.ไนซ์เซ็นเตอร์ออยล์</option><option>ชนิกานต์</option><option>ณัสวรรณ</option><option>ณัฐพร</option></datalist>
       </div>
 
       <div class="fsec">สเปกประจำรถ (ของที่ต้องใช้)</div>
@@ -896,7 +993,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxcE1AKXtMWF57UACMiSgJTO4
 var API_TIMEOUT_MS = 40000;
 var API_RETRY_DELAYS = [700, 1800, 3500];   // ลองใหม่ 3 ครั้ง
 var API_READ_ACTIONS = { getUserInfo:1, getAllVehicles:1, getDashboardData:1,
-  getMaintenanceLogs:1, getSchedules:1, getFuelLogs:1 };
+  getMaintenanceLogs:1, getSchedules:1, getFuelLogs:1, getBootstrap:1 };
 
 /* ---- แถบแจ้งสถานะการเชื่อมต่อ (สร้างเองด้วย JS ไม่ต้องแก้ CSS) ---- */
 function apiBanner(msg, kind){
@@ -986,7 +1083,7 @@ var google = { script: {} };
   var METHODS = ['getUserInfo','getAllVehicles','addVehicle','updateVehicle','deleteVehicle',
     'getMaintenanceLogs','addMaintenanceLog','updateMaintenanceLog','deleteMaintenanceLog',
     'getDashboardData','uploadAttachment','uploadVehiclePhoto','logout',
-    'getSchedules','saveSchedule','deleteSchedule','getFuelLogs','addFuelLog'];
+    'getSchedules','saveSchedule','deleteSchedule','getFuelLogs','addFuelLog','getBootstrap'];
   function Runner(){ this._ok = function(){}; this._err = function(){}; }
   Runner.prototype.withSuccessHandler = function(f){ this._ok = f; return this; };
   Runner.prototype.withFailureHandler = function(f){ this._err = f; return this; };
@@ -996,14 +1093,20 @@ var google = { script: {} };
       var body = { action: m, args: Array.prototype.slice.call(arguments),
                    token: localStorage.getItem('vh_token') || '' };
       if (!API_READ_ACTIONS[m]) body.reqId = apiUid();   // กันบันทึกซ้ำตอน retry
+      /* stale-while-revalidate: งานอ่าน → แสดงข้อมูลล่าสุดที่แคชไว้ทันที แล้วค่อยอัปเดตเมื่อเซิร์ฟเวอร์ตอบ
+         (GAS ตอบช้า 2–5 วิ ผู้ใช้จะไม่ต้องรอจอว่าง) */
+      var swr = API_READ_ACTIONS[m] && m !== 'getUserInfo' ? apiCacheGet(body) : null, shown = null;
+      if (swr && swr.res && swr.res.success){ shown = JSON.stringify(swr.res); setTimeout(function(){ self._ok(swr.res); }, 0); }
       apiCall(body)
         .then(function(res){
           if (res && res.error === 'UNAUTHORIZED'){ vhLogout(true); return; }
+          if (shown && JSON.stringify(res) === shown) return;      // ข้อมูลไม่เปลี่ยน ไม่ต้องวาดใหม่
           self._ok(res);
         })
         .catch(function(e){
           // อ่านข้อมูลไม่ได้จริงๆ → ใช้ข้อมูลล่าสุดที่แคชไว้ ดีกว่าจอว่าง
           var c = API_READ_ACTIONS[m] ? apiCacheGet(body) : null;
+          if (c && c.res && shown){ apiBanner('ออฟไลน์ — แสดงข้อมูลล่าสุด ' + apiAgo(c.t) + ' (แตะเพื่อโหลดใหม่)', 'stale'); return; }
           if (c && c.res){
             apiBanner('ออฟไลน์ — แสดงข้อมูลล่าสุด ' + apiAgo(c.t) + ' (แตะเพื่อโหลดใหม่)', 'stale');
             self._ok(c.res);
@@ -1096,7 +1199,7 @@ var TH_M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ
 var TYPE_ICONS = {'รถขนส่ง':'🚚','รถพนักงานขาย (DSR)':'🚗','รถส่วนตัวเจ้าของ':'🏠'};
 var MAINT_ICONS = {'เช็คระยะ/PM':'🛠️','ซ่อมทั่วไป':'🔧','เปลี่ยนยาง':'⚫','เปลี่ยนน้ำมันเครื่อง':'🛢️','ซ่อมเครื่องยนต์':'⚙️','ซ่อมตัวถัง/สี':'🎨','แบตเตอรี่':'🔋','อื่นๆ':'📋'};
 var BRANDS = {
-  toyota:{slug:'toyota'}, honda:{slug:'honda'}, nissan:{slug:'nissan'}, isuzu:{slug:'isuzu'},
+  toyota:{slug:'toyota'}, honda:{slug:'honda'}, nissan:{slug:'nissan'}, isuzu:{src:'brand-isuzu.png', name:'ISUZU'},
   mazda:{slug:'mazda'}, mitsubishi:{slug:'mitsubishi'}, bmw:{slug:'bmw'}, suzuki:{slug:'suzuki'},
   ford:{slug:'ford'}, mercedes:{slug:'mercedes'}, 'mercedes-benz':{slug:'mercedes'}, benz:{slug:'mercedes'},
   subaru:{slug:'subaru'}, kia:{slug:'kia'}, hyundai:{slug:'hyundai'}, volvo:{slug:'volvo'}, mini:{slug:'mini'}
@@ -1130,6 +1233,7 @@ function countUp(elem, target, suffix, dur){
   }
   requestAnimationFrame(step);
 }
+function brandSrc(b){ return b.src ? b.src : 'https://cdn.simpleicons.org/' + b.slug; }
 function getBrand(name){
   if (!name) return null;
   var k = String(name).trim().toLowerCase();
@@ -1139,7 +1243,7 @@ function logoChipHtml(brandName, sizeClass){
   var b = getBrand(brandName);
   var initial = brandName ? esc(String(brandName).trim().charAt(0).toUpperCase()) : '🚘';
   var img = '';
-  if (b) img = '<img src="https://cdn.simpleicons.org/' + b.slug + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">';
+  if (b) img = '<img src="' + brandSrc(b) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">';
   return '<div class="logo-chip ' + (sizeClass || '') + '">' + img +
     '<span class="fallback" style="' + (b ? 'display:none;' : '') + '">' + initial + '</span></div>';
 }
@@ -1236,7 +1340,7 @@ var s3Fn = function(v){ return typeof v === 'function' ? v : (Array.isArray(v) ?
 
 /* ---------- ชิ้นส่วนผิวโค้ง (loft) ----------
    part = { x0, x1, N, zb, zt, hw, top (อัตราแคบด้านบน), n (ความเหลี่ยม: 2 กลม … 8 เหลี่ยมมน), color(f) } */
-var S3_M = 16;
+var S3_M = 16, S3_NSCALE = 1;   // ความละเอียดผิวโค้ง (ฉากลานจอดลดลงเพื่อความเร็ว)
 function s3Section(part, x){
   var zb = part.zb(x), zt = part.zt(x), hw = part.hw(x), zc = (zb + zt) / 2, hz = Math.max(0.005, (zt - zb) / 2);
   var pts = [];
@@ -1262,13 +1366,13 @@ function s3Part(o){
            top: o.top == null ? 1 : o.top, n: o.n || 4, nb: o.nb || Math.max(o.n || 4, 6), color: o.color };
 }
 function s3Faces(part){
-  var secs = [], faces = [];
-  for (var i = 0; i <= part.N; i++){
-    var x = part.x0 + (part.x1 - part.x0) * i / part.N;
+  var secs = [], faces = [], PN = Math.max(4, Math.round(part.N * S3_NSCALE));
+  for (var i = 0; i <= PN; i++){
+    var x = part.x0 + (part.x1 - part.x0) * i / PN;
     secs.push(s3Section(part, x));
   }
   var grid = [];
-  for (var i2 = 0; i2 < part.N; i2++){
+  for (var i2 = 0; i2 < PN; i2++){
     grid.push([]);
     for (var j = 0; j < S3_M; j++){
       var a = secs[i2].pts[j], b = secs[i2].pts[(j + 1) % S3_M], c = secs[i2 + 1].pts[(j + 1) % S3_M], d = secs[i2 + 1].pts[j];
@@ -1300,7 +1404,7 @@ function s3Faces(part){
   }
   grid.forEach(function(row){ row.forEach(function(f){ if (f) faces.push(f); }); });
   /* ฝาปิดหน้า/หลัง */
-  faces.push({ pts: secs[part.N].pts.slice(), n: [1, 0, 0], c: [part.x1, 0, secs[part.N].zc], color: part.color([1, 0, 0], [part.x1, 0, secs[part.N].zc]) });
+  faces.push({ pts: secs[PN].pts.slice(), n: [1, 0, 0], c: [part.x1, 0, secs[PN].zc], color: part.color([1, 0, 0], [part.x1, 0, secs[PN].zc]) });
   faces.push({ pts: secs[0].pts.slice().reverse(), n: [-1, 0, 0], c: [part.x0, 0, secs[0].zc], color: part.color([-1, 0, 0], [part.x0, 0, secs[0].zc]) });
   return faces;
 }
@@ -1484,48 +1588,73 @@ function s3Model(kind, art){
 
 /* ---------- เรนเดอร์ ---------- */
 var S3_CACHE = {};
-function s3Render(M){
-  var items = [], W = M.W, r = M.r;
-  var pushFaces = function(faces, sort){
-    var vis = faces.filter(function(f){ return s3Vis(f.n); });
-    vis.forEach(function(f){ f.dd = f.pts.reduce(function(a, p){ return a + s3Proj(p).d; }, 0) / f.pts.length; f.shade = true; });
-    if (sort) vis.sort(function(a, b){ return b.dd - a.dd; });
+/* xf = { mirror: bool, rot: เรเดียน (รอบแกน z), dx, dy } — ใช้วางรถในฉากลานจอด */
+function s3Xf(xf){
+  if (!xf) return { p: function(p){ return p; }, n: function(n){ return n; } };
+  var c = Math.cos(xf.rot || 0), s = Math.sin(xf.rot || 0), m = xf.mirror ? -1 : 1;
+  return {
+    p: function(p){ var y = p[1] * m; return [p[0] * c - y * s + (xf.dx || 0), p[0] * s + y * c + (xf.dy || 0), p[2] + (xf.dz || 0)]; },
+    n: function(n){ var y = n[1] * m; return [n[0] * c - y * s, n[0] * s + y * c, n[2]]; }
+  };
+}
+function s3Items(M, xf){
+  var T = s3Xf(xf), items = [], W = M.W, r = M.r;
+  var pushFaces = function(faces){
+    var vis = [];
+    faces.forEach(function(f){
+      var n = T.n(f.n); if (!s3Vis(n)) return;
+      var pts = f.pts.map(T.p);
+      vis.push({ pts: pts, n: n, ns: f.ns ? T.n(f.ns) : n, color: f.color, shade: true,
+                 dd: pts.reduce(function(a, p){ return a + s3Proj(p).d; }, 0) / pts.length });
+    });
+    vis.sort(function(a, b){ return b.dd - a.dd; });
     vis.forEach(function(f){ items.push(f); });
   };
+  var plain = function(o){ var p3 = o.pts || o.poly || o.hull || o.line, q = { color: o.color };
+    q[o.hull ? 'hull' : (o.line ? 'line' : 'poly')] = p3.map(T.p); return q; };
   var wheelY = function(side){ return side * (W / 2 + 0.01); };
-  M.wheels.forEach(function(w){ s3Wheel(w[0], r, wheelY(1), 1, w[1]).forEach(function(o){ items.push(o); }); });
-  if (M.under) pushFaces(M.under, true);                                                     // แชสซี อยู่หลังสุด
-  M.parts.forEach(function(p){ pushFaces(s3Faces(p), true); });
-  /* เงาในซุ้มล้อฝั่งใกล้ */
-  M.wheels.forEach(function(w){ items.push({ poly: s3Circle(w[0], r, r * 1.1, wheelY(-1) + 0.2, 20), color: '#0e1115' }); });
-  if (M.boxes.length) pushFaces([].concat.apply([], M.boxes), true);                         // กันชน/กระจกมองข้าง
-  M.decals.forEach(function(d){ if (d.line || s3Vis(d.n)) items.push(d); });
-  M.wheels.forEach(function(w){ s3Wheel(w[0], r, wheelY(-1), -1, w[1]).forEach(function(o){ items.push(o); }); });
-
-  var all = [];
+  M.wheels.forEach(function(w){ s3Wheel(w[0], r, wheelY(1), 1, w[1]).forEach(function(o){ items.push(plain(o)); }); });
+  if (M.under) pushFaces(M.under);
+  M.parts.forEach(function(p){ pushFaces(s3Faces(p)); });
+  M.wheels.forEach(function(w){ items.push(plain({ poly: s3Circle(w[0], r, r * 1.1, wheelY(-1) + 0.2, 16), color: '#0e1115' })); });
+  if (M.boxes.length) pushFaces([].concat.apply([], M.boxes));
+  M.decals.forEach(function(d){ if (d.line || s3Vis(T.n(d.n))) items.push(plain(d)); });
+  M.wheels.forEach(function(w){ s3Wheel(w[0], r, wheelY(-1), -1, w[1]).forEach(function(o){ items.push(plain(o)); }); });
+  return items;
+}
+/* แปลง items เป็น polygon SVG ด้วยฟังก์ชันพิกัดจอ P(p) */
+function s3Paint(items, P){
+  var out = '';
   items.forEach(function(it){
     var p3 = it.pts || it.poly || it.hull || it.line;
-    it.sp = p3.map(s3Proj);
-    if (it.hull) it.sp = s3Hull(it.sp);
-    all = all.concat(it.sp);
-  });
-  var foot = [[0, -W / 2, 0], [M.L, -W / 2, 0], [M.L, W / 2, 0], [0, W / 2, 0]].map(s3Proj);
-  all = all.concat(foot);
-  var xs = all.map(function(p){ return p.x; }), ys = all.map(function(p){ return p.y; });
-  var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
-  var VW = 200, VH = 130, pad = 7, k = Math.min((VW - pad * 2) / (maxX - minX), (VH - pad * 2) / (maxY - minY));
-  var ox = (VW - (maxX - minX) * k) / 2 - minX * k, oy = (VH - (maxY - minY) * k) / 2 - minY * k;
-  var P = function(p){ return (p.x * k + ox).toFixed(1) + ',' + (p.y * k + oy).toFixed(1); };
-  var fc = foot.reduce(function(a, p){ return { x: a.x + p.x / 4, y: a.y + p.y / 4 }; }, { x: 0, y: 0 });
-  var out = '<defs><radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset=".3" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
-    '<ellipse cx="' + (fc.x * k + ox).toFixed(1) + '" cy="' + (fc.y * k + oy + 2).toFixed(1) + '" rx="' + ((maxX - minX) * k * 0.55).toFixed(1) + '" ry="' + ((maxX - minX) * k * 0.15).toFixed(1) + '" fill="url(#sh)"/>';
-  items.forEach(function(it){
-    var pts = it.sp.map(P).join(' ');
+    var sp = p3.map(s3Proj);
+    if (it.hull) sp = s3Hull(sp);
+    var pts = sp.map(P).join(' ');
     if (it.line){ out += '<polyline points="' + pts + '" fill="none" stroke="' + it.color + '" stroke-width="1"/>'; return; }
     var c = it.shade ? s3Shade(it.color, it.ns || it.n) : it.color;
     out += '<polygon points="' + pts + '" fill="' + c + '" stroke="' + c + '" stroke-width=".55" stroke-linejoin="round"/>';
   });
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + VW + ' ' + VH + '">' + out + '</svg>';
+  return out;
+}
+function s3Bounds(items, extra){
+  var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  var eat = function(p){ var q = s3Proj(p); if (q.x < minX) minX = q.x; if (q.x > maxX) maxX = q.x; if (q.y < minY) minY = q.y; if (q.y > maxY) maxY = q.y; };
+  items.forEach(function(it){ (it.pts || it.poly || it.hull || it.line).forEach(eat); });
+  (extra || []).forEach(eat);
+  return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+}
+/* ไอคอนเดี่ยว: ย่อ/ขยายให้พอดีกรอบ 200x130 + เงาใต้รถ */
+function s3Render(M){
+  var items = s3Items(M), W = M.W;
+  var foot = [[0, -W / 2, 0], [M.L, -W / 2, 0], [M.L, W / 2, 0], [0, W / 2, 0]];
+  var b = s3Bounds(items, foot);
+  var VW = 200, VH = 130, pad = 7, k = Math.min((VW - pad * 2) / (b.maxX - b.minX), (VH - pad * 2) / (b.maxY - b.minY));
+  var ox = (VW - (b.maxX - b.minX) * k) / 2 - b.minX * k, oy = (VH - (b.maxY - b.minY) * k) / 2 - b.minY * k;
+  var P = function(p){ return (p.x * k + ox).toFixed(1) + ',' + (p.y * k + oy).toFixed(1); };
+  var fc = foot.map(s3Proj).reduce(function(a, p){ return { x: a.x + p.x / 4, y: a.y + p.y / 4 }; }, { x: 0, y: 0 });
+  var out = '<defs><radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset=".3" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
+    '<ellipse cx="' + (fc.x * k + ox).toFixed(1) + '" cy="' + (fc.y * k + oy + 2).toFixed(1) + '" rx="' + ((b.maxX - b.minX) * k * 0.55).toFixed(1) + '" ry="' + ((b.maxX - b.minX) * k * 0.15).toFixed(1) + '" fill="url(#sh)"/>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + VW + ' ' + VH + '">' + out + s3Paint(items, P) + '</svg>';
 }
 /* คืนเป็น <img> (data URI) — DOM เบา, ไม่มีปัญหา id ซ้ำ, แคชตามรุ่น+สี */
 function s3Img(kind, art){
@@ -1535,17 +1664,200 @@ function s3Img(kind, art){
 }
 
 /* API ที่หน้าเว็บเรียก (ชื่อเดิม) */
-var S3_SHAPE_MAP = { sedan: 'sedan', hatch: 'hatch', pickup: 'pickup', suv: 'suv', mpv: 'mpv', van: 'van', truck: 'truck' };
+var S3_SHAPE_MAP = { sedan: 'sedan', pickup: 'pickup', suv: 'suv', mpv: 'mpv', van: 'van', truck: 'truck' };
 function carSvg(shape, color){ return s3Img(S3_SHAPE_MAP[shape] || 'sedan', { color: color, box: '#f2f4f6', bumper: '#25292f', livery: 'white' }); }
 function carArtImg(art){ return s3Img(art.model, art); }
+
+/* ================= ลานจอดรถ 3D หน้าโกดัง Nice Center Oil (v5) =================
+   ฉากเดียวกันกับไอคอนรถ (กล้องมุมเฉียง, แสงเดียวกัน) — รถจอดเป็นโซนตามประเภท หันหน้าออกมาทางผู้ชม
+   คืนค่า SVG string; รถแต่ละคันอยู่ใน <g class="lot-car" data-id> เพื่อ hover/คลิกได้ */
+var LOT_ZONES = [
+  { type: 'รถขนส่ง',            label: 'โซนรถขนส่ง',      icon: '🚚', y: 10.4, bay: 3.5 },
+  { type: 'รถพนักงานขาย (DSR)', label: 'โซนรถพนักงานขาย', icon: '🚗', y: 2.6,  bay: 3.1 },
+  { type: 'รถส่วนตัวเจ้าของ',   label: 'โซนรถผู้บริหาร',   icon: '⭐', y: -5.0, bay: 3.1 }
+];
+var LOT_CX = 15;            // กึ่งกลางลานตามแกน x (เมตร)
+var LOT_PER_ROW = 10;
+
+function lotModelFor(v){
+  var art = CAR_ART[String(v['ทะเบียนรถ'] || '').replace(/\D/g, '')];
+  if (art) return s3Model(art.model, art);
+  var shape = guessCarShape(v);
+  return s3Model(S3_SHAPE_MAP[shape] || 'sedan', { color: guessCarColor(v, shape), box: '#f2f4f6', bumper: '#25292f', livery: 'white' });
+}
+
+/* วางข้อความบนระนาบ 3D (พื้น หรือ ผนังด้านหน้าโกดัง) ด้วย matrix */
+function lotTextOnPlane(origin, uDir, vDir, P, k, html, attrs){
+  var o = s3Proj(origin), u = s3Proj([origin[0] + uDir[0], origin[1] + uDir[1], origin[2] + uDir[2]]), v = s3Proj([origin[0] + vDir[0], origin[1] + vDir[1], origin[2] + vDir[2]]);
+  var a = (u.x - o.x) * k, b = (u.y - o.y) * k, c = (v.x - o.x) * k, d = (v.y - o.y) * k, xy = P(o).split(',');
+  return '<text transform="matrix(' + [a, b, c, d, xy[0], xy[1]].map(function(n){ return (+n).toFixed(3); }).join(' ') + ')" ' + (attrs || '') + '>' + html + '</text>';
+}
+
+function buildLotScene(vehicles, opt){
+  opt = opt || {};
+  var night = !!opt.night;
+  var saveM = S3_M, saveN = S3_NSCALE; S3_M = 12; S3_NSCALE = 0.55;          // ความละเอียดฉาก (เบาลง)
+  try {
+    /* ---------- จัดรถลงช่องจอดตามโซน ---------- */
+    var placed = [], rowsUsed = [];
+    var byZone = LOT_ZONES.map(function(){ return []; });
+    vehicles.forEach(function(v){
+      var zi = LOT_ZONES.map(function(z){ return z.type; }).indexOf(v['ประเภทรถ']);
+      byZone[zi < 0 ? 2 : zi].push(v);
+    });
+    byZone.forEach(function(list, zi){
+      var z = LOT_ZONES[zi];
+      list.sort(function(a, b){ return (a._inactive ? 1 : 0) - (b._inactive ? 1 : 0); });   // รถจอดยาวไว้ท้ายแถว
+      for (var r = 0; r * LOT_PER_ROW < Math.max(1, list.length); r++){
+        var chunk = list.slice(r * LOT_PER_ROW, (r + 1) * LOT_PER_ROW);
+        var rowY = z.y - r * 7.4, n = Math.max(chunk.length, 3), x0 = LOT_CX - n * z.bay / 2;
+        rowsUsed.push({ zone: z, y: rowY, x0: x0, n: n });
+        chunk.forEach(function(v, i){ placed.push({ v: v, bx: x0 + (i + 0.5) * z.bay, by: rowY }); });
+      }
+    });
+    var minRowY = Math.min.apply(null, rowsUsed.map(function(r){ return r.y; }));
+
+    /* ---------- ฉากคงที่: พื้น โกดัง ไฟ ---------- */
+    var G = { ground: [], marks: [], bldg: [], back: [], front: [] };
+    var X0 = -3, X1 = 33, Y0 = minRowY - 5.5, YB = 16;                       // ขอบลาน
+    var asphalt = night ? '#2a2f36' : '#6a7078';
+    G.ground.push({ pts: [[X0, Y0, 0], [X1, Y0, 0], [X1, YB, 0], [X0, YB, 0]], n: [0, 0, 1], color: asphalt, shade: true });
+    G.ground.push({ pts: [[X0, YB - 0.6, 0.005], [X1, YB - 0.6, 0.005], [X1, YB, 0.005], [X0, YB, 0.005]], n: [0, 0, 1], color: night ? '#3a4048' : '#8b9198', shade: true }); // ทางเท้าหน้าโกดัง
+    /* เส้นช่องจอด + ป้ายโซนบนพื้น */
+    var lineCol = night ? 'rgba(255,255,255,.45)' : 'rgba(255,255,255,.85)';
+    rowsUsed.forEach(function(r){
+      var half = r.zone.type === 'รถขนส่ง' ? 2.9 : 2.5;
+      for (var i = 0; i <= r.n; i++){
+        var x = r.x0 + i * r.zone.bay;
+        G.marks.push({ line: [[x, r.y - half, 0.01], [x, r.y + half, 0.01]], color: lineCol });
+      }
+      G.marks.push({ line: [[r.x0, r.y + half, 0.01], [r.x0 + r.n * r.zone.bay, r.y + half, 0.01]], color: lineCol });
+    });
+
+    /* โกดัง */
+    var facade = night ? '#b9c0c8' : '#e7eaee', roof = night ? '#4d5560' : '#7d8794';
+    G.bldg = G.bldg.concat(s3BoxFaces(-1, 31, 16, 23, 0, 6.4, facade));
+    G.bldg = G.bldg.concat(s3BoxFaces(-1.3, 31.3, 15.7, 23.3, 6.4, 6.75, roof));
+    G.bldg = G.bldg.concat(s3BoxFaces(0.4, 12.6, 14.4, 16, 0, 1.05, night ? '#7d858e' : '#a3aab2'));  // ชานชาลาขึ้นของ
+    var fy = 15.995, dec = [];
+    var rect = function(x0, x1, z0, z1, color){ dec.push({ poly: [[x0, fy, z0], [x1, fy, z0], [x1, fy, z1], [x0, fy, z1]], color: color }); };
+    rect(-1, 31, 5.75, 6.1, '#ff7a3d');                                                          // แถบสีส้มแบรนด์
+    [[1.2, 5.6], [6.6, 11.0]].forEach(function(d){                                              // ประตูม้วน 2 บาน
+      rect(d[0], d[1], 1.05, 4.6, night ? '#59616b' : '#9aa3ad');
+      for (var z = 1.3; z < 4.5; z += 0.32) dec.push({ line: [[d[0], fy - 0.002, z], [d[1], fy - 0.002, z]], color: 'rgba(0,0,0,.18)' });
+    });
+    rect(13.2, 21.8, 3.55, 5.35, '#18212d');                                                    // ป้ายชื่อ
+    [[23.2, 25.4], [25.9, 28.1]].forEach(function(w){ rect(w[0], w[1], 1.4, 3.3, night ? '#ffd27a' : '#2b3644'); }); // หน้าต่างสำนักงาน
+    rect(28.7, 30.2, 0, 2.6, night ? '#3a2f24' : '#5b4a3a');                                     // ประตูสำนักงาน
+    G.bldgDecals = dec;
+
+    /* ไฟส่องลาน */
+    var lamps = [[-1.8, Y0 + 1.2], [31.8, Y0 + 1.2], [-1.8, 7], [31.8, 7]];               // เสาไฟอยู่ขอบลาน ไม่บังรถ
+    lamps.forEach(function(l){
+      var post = s3BoxFaces(l[0] - 0.08, l[0] + 0.08, l[1] - 0.08, l[1] + 0.08, 0, 5.2, '#3b424b')
+        .concat(s3BoxFaces(l[0] - 0.35, l[0] + 0.35, l[1] - 0.15, l[1] + 0.15, 5.2, 5.4, '#2b3138'));
+      (l[1] < 0 ? G.front : G.back).push({ post: post, at: l });
+    });
+
+    /* ---------- รถ ---------- */
+    var cars = placed.map(function(p){
+      var M = lotModelFor(p.v);
+      var xf = { mirror: true, rot: -Math.PI / 2, dx: p.bx, dy: p.by + M.L / 2 };
+      var items = s3Items(M, xf);
+      var maxZ = 0; items.forEach(function(it){ (it.pts || it.poly || it.hull || it.line).forEach(function(q){ if (q[2] > maxZ) maxZ = q[2]; }); });
+      return { p: p, items: items, top: [p.bx, p.by, maxZ + 0.55], depth: s3Proj([p.bx, p.by, 0]).d, foot: [p.bx, p.by, M.W, M.L] };
+    });
+    cars.sort(function(a, b){ return b.depth - a.depth; });                                       // ไกล → ใกล้
+
+    /* ---------- ขนาดภาพ ---------- */
+    var bound = [[X0, Y0, 0], [X1, Y0, 0], [X1, YB, 0], [X0, YB, 0], [-1.3, 23.3, 6.75], [31.3, 15.7, 6.75], [31.3, 23.3, 6.75], [-1.3, 15.7, 9]];
+    var b = s3Bounds([], bound);
+    var k = opt.scale || 22, pad = 10;
+    var VW = Math.round((b.maxX - b.minX) * k + pad * 2), VH = Math.round((b.maxY - b.minY) * k + pad * 2);
+    var ox = pad - b.minX * k, oy = pad - b.minY * k;
+    var P = function(q){ return (q.x * k + ox).toFixed(1) + ',' + (q.y * k + oy).toFixed(1); };
+    var SP = function(p3){ var q = s3Proj(p3); return { x: q.x * k + ox, y: q.y * k + oy }; };
+
+    var svg = '<svg class="lot-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + VW + ' ' + VH + '" preserveAspectRatio="xMidYMid meet">';
+    svg += '<defs>' +
+      '<linearGradient id="lotSky" x1="0" y1="0" x2="0" y2="1">' + (night
+        ? '<stop offset="0" stop-color="#070b14"/><stop offset=".55" stop-color="#121b2c"/><stop offset="1" stop-color="#1d2738"/>'
+        : '<stop offset="0" stop-color="#7fb6e6"/><stop offset=".6" stop-color="#cfe6f7"/><stop offset="1" stop-color="#eef6fc"/>') + '</linearGradient>' +
+      '<radialGradient id="lotGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd890" stop-opacity=".55"/><stop offset="1" stop-color="#ffd890" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="lotCarSh" cx=".5" cy=".5" r=".5"><stop offset=".35" stop-color="#000" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>' +
+      '</defs>';
+    svg += '<rect width="' + VW + '" height="' + VH + '" fill="url(#lotSky)"/>';
+    if (night){ for (var s = 0; s < 40; s++){ var sx = (s * 97.3) % VW, sy = (s * 53.7) % (VH * 0.28); svg += '<circle cx="' + sx.toFixed(0) + '" cy="' + sy.toFixed(0) + '" r="' + (s % 3 ? 0.8 : 1.3) + '" fill="#fff" opacity="' + (0.3 + (s % 5) / 10) + '"/>'; } }
+    else { svg += '<circle cx="' + (VW * 0.86).toFixed(0) + '" cy="' + (VH * 0.1).toFixed(0) + '" r="26" fill="#fff6d6" opacity=".9"/>'; }
+
+    /* ต้นไม้ไกลๆ หลังโกดัง (เงาทึบ) */
+    var treeCol = night ? '#0f1824' : '#8fb7a2';
+    for (var t = 0; t < 9; t++){ var tp = SP([-4 + t * 4.6, 27, 0]); svg += '<ellipse cx="' + tp.x.toFixed(0) + '" cy="' + (tp.y - 70).toFixed(0) + '" rx="' + (55 + (t % 3) * 12) + '" ry="' + (60 + (t % 2) * 15) + '" fill="' + treeCol + '"/>'; }
+
+    svg += '<g class="lot-ground">' + s3Paint(G.ground, P) + s3Paint(G.marks, P);
+    /* ป้ายโซนบนพื้น */
+    rowsUsed.forEach(function(r, i){
+      if (rowsUsed.findIndex(function(q){ return q.zone === r.zone; }) !== i) return;
+      var half = r.zone.type === 'รถขนส่ง' ? 2.9 : 2.5;
+      svg += lotTextOnPlane([r.x0 + 0.2, r.y - half - 0.45, 0.02], [1, 0, 0], [0, -1, 0], P, k,
+        r.zone.label.toUpperCase(), 'font-size=".85" font-weight="800" fill="' + (night ? 'rgba(255,190,120,.55)' : 'rgba(255,255,255,.9)') + '" font-family="Noto Sans Thai, sans-serif" letter-spacing=".05"');
+    });
+    svg += '</g>';
+
+    /* โกดัง + ป้าย */
+    svg += '<g class="lot-bldg">' + s3Paint(G.bldg.filter(function(f){ return s3Vis(f.n); }).map(function(f){ return { pts: f.pts, n: f.n, color: f.color, shade: true }; }), P) +
+      s3Paint(G.bldgDecals, P);
+    svg += lotTextOnPlane([13.75, fy - 0.01, 4.62], [1, 0, 0], [0, 0, -1], P, k, 'NICE CENTER OIL', 'font-size=".82" font-weight="900" fill="#ff8a4c" letter-spacing=".06" font-family="Noto Sans Thai, sans-serif"');
+    svg += lotTextOnPlane([13.75, fy - 0.01, 5.08], [1, 0, 0], [0, 0, -1], P, k, 'หจก.ไนซ์เซ็นเตอร์ออยล์', 'font-size=".42" font-weight="700" fill="#e7ecf2" font-family="Noto Sans Thai, sans-serif"');
+    if (night){
+      [[3.4, 4.9], [8.8, 4.9]].forEach(function(l){ var g = SP([l[0], fy, l[1]]); svg += '<ellipse cx="' + g.x.toFixed(0) + '" cy="' + (g.y + 40).toFixed(0) + '" rx="90" ry="60" fill="url(#lotGlow)"/>'; });
+    }
+    svg += '</g>';
+
+    var paintLamp = function(L){
+      var faces = L.post.filter(function(f){ return s3Vis(f.n); }).map(function(f){ return { pts: f.pts, n: f.n, color: f.color, shade: true }; });
+      var out = s3Paint(faces, P), head = SP([L.at[0], L.at[1], 5.15]);
+      out += '<circle cx="' + head.x.toFixed(1) + '" cy="' + head.y.toFixed(1) + '" r="3.2" fill="' + (night ? '#fff3c4' : '#d9dee4') + '"/>';
+      if (night){ var gp = SP([L.at[0], L.at[1], 0]); out += '<ellipse cx="' + gp.x.toFixed(0) + '" cy="' + gp.y.toFixed(0) + '" rx="130" ry="55" fill="url(#lotGlow)"/>'; }
+      return out;
+    };
+    svg += '<g class="lot-lamps">' + G.back.map(paintLamp).join('') + '</g>';
+
+    /* รถ (เงา + ตัวรถ + หมุดสถานะ) */
+    var pins = '';
+    svg += '<g class="lot-cars">';
+    cars.forEach(function(c){
+      var v = c.p.v, cls = ['lot-car'];
+      if (v._inactive) cls.push('inactive');
+      if (v._lotUrgent) cls.push('t-urgent');
+      if (v._lotService) cls.push('t-service');
+      var f = c.foot, sh = SP([f[0], f[1], 0]);
+      var shW = (f[2] + 0.8) * k * 0.95, shH = (f[3] + 0.4) * k * 0.32;
+      svg += '<g class="' + cls.join(' ') + '" data-id="' + esc(v.ID) + '">' +
+        '<ellipse cx="' + sh.x.toFixed(1) + '" cy="' + (sh.y + 2).toFixed(1) + '" rx="' + shW.toFixed(1) + '" ry="' + shH.toFixed(1) + '" fill="url(#lotCarSh)"/>' +
+        s3Paint(c.items, P) + '</g>';
+      var tp = SP(c.top);
+      if (v._lotUrgent || v._lotService){
+        var col = v._lotUrgent ? '#ff5a5a' : '#ffc24b', sym = v._lotUrgent ? '!' : '🔧';
+        pins += '<g class="lot-pin' + (v._lotUrgent ? ' urgent' : '') + '" data-id="' + esc(v.ID) + '" transform="translate(' + tp.x.toFixed(1) + ',' + tp.y.toFixed(1) + ')">' +
+          '<path d="M0,0 L-6,-9 A9,9 0 1 1 6,-9 Z" fill="' + col + '" stroke="#fff" stroke-width="1.6"/>' +
+          '<text x="0" y="-11.5" text-anchor="middle" font-size="' + (v._lotUrgent ? 11 : 8.5) + '" font-weight="900" fill="#fff" font-family="sans-serif">' + sym + '</text></g>';
+      }
+    });
+    svg += '</g><g class="lot-lamps">' + G.front.map(paintLamp).join('') + '</g><g class="lot-pins">' + pins + '</g></svg>';
+    return { svg: svg, w: VW, h: VH };
+  } finally { S3_M = saveM; S3_NSCALE = saveN; }
+}
+
 function carChipHtml(v, sizeClass){
   var art = CAR_ART[String(v['ทะเบียนรถ'] || '').replace(/\D/g, '')];     // รถที่ปั้นจากรูปจริง → ใช้โมเดลเฉพาะคัน
   var shape = guessCarShape(v), color = guessCarColor(v, shape);
   var b = getBrand(v['ยี่ห้อ']);
   var initial = v['ยี่ห้อ'] ? esc(String(v['ยี่ห้อ']).trim().charAt(0).toUpperCase()) : '';
+  var bname = v['ยี่ห้อ'] ? esc(String(v['ยี่ห้อ']).trim().toUpperCase().slice(0, 6)) : '';
   var badge = b
-    ? '<span class="brand-badge"><img src="https://cdn.simpleicons.org/' + b.slug + '" alt="" loading="lazy" onerror="this.outerHTML=\'<i>' + initial + '</i>\'"></span>'
-    : (initial ? '<span class="brand-badge"><i>' + initial + '</i></span>' : '');
+    ? '<span class="brand-badge' + (b.src ? ' own' : '') + '"><img src="' + brandSrc(b) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'txt\');this.outerHTML=\'<i>' + (b.name || initial) + '</i>\'"></span>'
+    : (bname ? '<span class="brand-badge txt"><i>' + bname + '</i></span>' : '');   // เช่น ISUZU — ยี่ห้อที่ไม่มีโลโก้ในคลัง
   return '<div class="car-chip ' + (sizeClass || '') + '" title="' + esc((v['ยี่ห้อ'] || '') + ' ' + (v['รุ่น'] || '')) + '">' +
     (art ? carArtImg(art) : carSvg(shape, color)) + badge + '</div>';
 }
@@ -1582,6 +1894,7 @@ function toggleTheme(){
   var cur = document.documentElement.getAttribute('data-theme');
   var next = cur === 'dark' ? 'light' : 'dark';
   applyTheme(next);
+  if (STATE._dashData && el('tab-dashboard').classList.contains('active')) renderDashboard(STATE._dashData);
   try { localStorage.setItem('vh_theme', next); } catch(e){}
 }
 
@@ -1638,132 +1951,224 @@ function switchTab(name){
   if (name === 'report') loadReport();
 }
 
-/* ================= DASHBOARD ================= */
+/* ================= DASHBOARD (v5) =================
+   1) ลานจอดรถ 3D หน้าโกดัง (interactive)  2) รอบต่อภาษี 3 รอบ  3) Leaderboard  4) สัดส่วน/ค่าซ่อม
+   โหลดข้อมูลทั้งหมดใน "รอบเดียว" (getBootstrap) + แสดงแคชทันทีระหว่างรอ */
 function loadDashboard(){
-  google.script.run.withSuccessHandler(renderDashboard).withFailureHandler(onFatalError).getDashboardData();
-  if (!STATE.maintAll){
-    google.script.run.withSuccessHandler(function(res){
-      if (res.success){ STATE.maintAll = res.data; if (STATE._dashData) renderDashboard(STATE._dashData, true); }
-    }).withFailureHandler(function(){}).getMaintenanceLogs('');
-  }
+  google.script.run.withSuccessHandler(function(res){
+    if (!res || !res.success){ renderDashboard(res || { success: false, error: 'โหลดไม่สำเร็จ' }); return; }
+    STATE.maintAll = res.data.maintenance || [];
+    STATE.schedAll = res.data.schedules || [];
+    renderDashboard({ success: true, data: res.data.dashboard });
+  }).withFailureHandler(onFatalError).getBootstrap();
 }
-function renderDashboard(res, isRerender){
+
+/* รอบต่อภาษีตั้งต้น (ใช้เมื่อชีตยังไม่ได้รันอัปเกรด v5) — ตามตารางของเฟิร์น */
+var RENEWAL_FALLBACK = { '4869':'ธ.ค.','7711':'ธ.ค.','7187':'ธ.ค.','157':'ธ.ค.','5890':'ธ.ค.','6444':'ธ.ค.',
+  '7218':'มี.ค.','3595':'มี.ค.','3608':'มี.ค.','5550':'มี.ค.','2079':'มี.ค.','3532':'มี.ค.','8273':'ก.ค.','2869':'ก.ค.','6302':'ก.ค.' };
+var OWNER_FALLBACK = { '4869':'หจก.ไนซ์เซ็นเตอร์ออยล์','7711':'หจก.ไนซ์เซ็นเตอร์ออยล์','7218':'หจก.ไนซ์เซ็นเตอร์ออยล์','3595':'หจก.ไนซ์เซ็นเตอร์ออยล์',
+  '7187':'ชนิกานต์','157':'ชนิกานต์','5890':'ชนิกานต์','3608':'ชนิกานต์','2079':'ชนิกานต์','3532':'ชนิกานต์','6302':'ชนิกานต์',
+  '6444':'ณัฐพร','5550':'ณัสวรรณ','8273':'ณัสวรรณ','2869':'ณัสวรรณ' };
+var RENEWAL_GROUPS = [
+  { key: 'ธ.ค.', month: 11, name: 'รอบธันวา',  color: '#ffb020' },
+  { key: 'มี.ค.', month: 2,  name: 'รอบมีนา',   color: '#36c46a' },
+  { key: 'ก.ค.', month: 6,  name: 'รอบกรกฎา',  color: '#27a8e8' }
+];
+function plateDigits(v){ return String(v['ทะเบียนรถ'] || '').replace(/\D/g, ''); }
+function renewalGroupOf(v){ return v['กลุ่มต่อภาษี'] || RENEWAL_FALLBACK[plateDigits(v)] || ''; }
+function ownerOf(v){ return v['ผู้ถือกรรมสิทธิ์'] || OWNER_FALLBACK[plateDigits(v)] || ''; }
+function thDate(d, full){ return d.getDate() + ' ' + TH_M[d.getMonth()] + (full === false ? '' : ' ' + String(d.getFullYear() + 543).slice(-2)); }
+function daysUntil(d){ var t = new Date(); t.setHours(0, 0, 0, 0); var x = new Date(d); x.setHours(0, 0, 0, 0); return Math.round((x - t) / 86400000); }
+
+/* ธงสถานะสำหรับฉาก: ต้องต่อเอกสารภายใน 30 วัน / ใกล้ครบรอบซ่อมบำรุง */
+function flagVehicles(vehicles){
+  var svcDue = {};
+  (STATE.schedAll || []).forEach(function(s){ if (s._dueStatus === 'due' || s._dueStatus === 'soon') svcDue[s['ทะเบียนรถ']] = true; });
+  vehicles.forEach(function(v){
+    var d = [v._actExpiry, v._insuranceExpiry, v._plateExpiry].filter(function(x){ return x && x.daysLeft !== null && x.daysLeft !== undefined; })
+      .map(function(x){ return x.daysLeft; });
+    var min = d.length ? Math.min.apply(null, d) : null;
+    v._lotUrgent = !v._inactive && min !== null && min <= 30;
+    v._lotService = !v._inactive && !!svcDue[v['ทะเบียนรถ']];
+  });
+}
+
+function renderDashboard(res){
   if (!res.success){ el('dashboardContent').innerHTML = '<div class="err">' + esc(res.error) + '</div>'; return; }
   STATE._dashData = res;
   STATE.vehicles = res.data.vehicles;
-  var s = res.data.summary;
-  var total = s.total || 0;
-  var pct = total ? Math.round((s.green / total) * 100) : 0;
-  var todayTh = new Date();
-  var dateStr = todayTh.getDate() + ' ' + TH_M[todayTh.getMonth()] + ' ' + (todayTh.getFullYear() + 543);
+  flagVehicles(STATE.vehicles);
+  var s = res.data.summary, V = STATE.vehicles;
+  var urgent = V.filter(function(v){ return v._lotUrgent; }).length, svc = V.filter(function(v){ return v._lotService; }).length;
+  var parked = V.filter(function(v){ return v._inactive; }).length;
+  var today = new Date();
 
-  /* --- hero: fleet health gauge --- */
-  var ARC = 251.33; /* length of semicircle r=80 */
   var html =
-  '<div class="hero anim-in">' +
-    '<div class="hero-flex">' +
-      '<div class="gauge-wrap">' +
-        '<svg viewBox="0 0 200 112">' +
-          '<defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0">' +
-            '<stop offset="0%" stop-color="var(--red)"/><stop offset="55%" stop-color="var(--amber)"/><stop offset="100%" stop-color="var(--green)"/>' +
-          '</linearGradient></defs>' +
-          '<path d="M20,100 A80,80 0 0 1 180,100" fill="none" stroke="var(--border-strong)" stroke-width="13" stroke-linecap="round"/>' +
-          '<path id="gaugeArc" d="M20,100 A80,80 0 0 1 180,100" fill="none" stroke="url(#gg)" stroke-width="13" stroke-linecap="round" ' +
-            'stroke-dasharray="' + ARC + '" stroke-dashoffset="' + ARC + '" style="transition:stroke-dashoffset 1.3s cubic-bezier(.22,1,.36,1);"/>' +
-        '</svg>' +
-        '<div class="gauge-center"><div class="big" id="gaugePct">0%</div><div class="sub">สถานะปกติ</div></div>' +
-      '</div>' +
-      '<div class="hero-side">' +
-        '<h2>สวัสดี 👋</h2><div class="date">' + dateStr + ' • ใช้งานอยู่ ' + total + ' คัน' +
-          (s.inactive ? ' <span class="muted">(จอด/ขายแล้ว ' + s.inactive + ')</span>' : '') + '</div>' +
-        '<div class="stat-mini">' +
-          '<div class="stat-line" onclick="goVehicles(\'red\')"><span class="dot d-red"></span>ต้องรีบต่อ (≤7 วัน)<b style="color:var(--red)" id="cntRed">0</b></div>' +
-          '<div class="stat-line" onclick="goVehicles(\'yellow\')"><span class="dot d-yellow"></span>ใกล้กำหนด (≤30 วัน)<b style="color:var(--amber-text)" id="cntYellow">0</b></div>' +
-          '<div class="stat-line" onclick="goVehicles(\'green\')"><span class="dot d-green"></span>สถานะปกติ<b style="color:var(--green)" id="cntGreen">0</b></div>' +
-        '</div>' +
+  '<div class="lot-card anim-in">' +
+    '<div class="lot-head">' +
+      '<div><div class="lot-title">ลานจอด <b>Nice Center Oil</b></div>' +
+      '<div class="lot-sub">' + today.getDate() + ' ' + TH_M[today.getMonth()] + ' ' + (today.getFullYear() + 543) + ' • ใช้งานอยู่ ' + s.total + ' คัน' + (parked ? ' • จอดยาว ' + parked : '') + '</div></div>' +
+      '<div class="lot-chips">' +
+        '<button class="lot-chip active" data-f="" onclick="lotFilter(\'\')">ทั้งหมด <b>' + V.length + '</b></button>' +
+        '<button class="lot-chip red" data-f="t-urgent" onclick="lotFilter(\'t-urgent\')">ต้องต่อเอกสาร <b>' + urgent + '</b></button>' +
+        '<button class="lot-chip amber" data-f="t-service" onclick="lotFilter(\'t-service\')">ใกล้ครบรอบซ่อม <b>' + svc + '</b></button>' +
       '</div>' +
     '</div>' +
+    '<div class="lot-wrap" id="lotWrap"><div class="lot-stage" id="lotStage">' + lotSceneHtml(V) + '</div>' +
+      '<div class="lot-tip" id="lotTip"></div></div>' +
+    '<div class="lot-hint">👆 แตะรถเพื่อดูรายละเอียด • <span style="color:var(--red)">●</span> ต้องต่อ พรบ./ประกัน/ภาษี ใน 30 วัน • <span style="color:var(--amber)">●</span> ใกล้ครบรอบเปลี่ยนถ่าย</div>' +
   '</div>';
 
-  /* --- grid: donut by type + cost spark --- */
-  html += '<div class="dash-grid">';
-  html += donutCardHtml(res.data.vehicles.filter(function(v){ return !v._inactive; }));
-  html += costSparkCardHtml();
-  html += '</div>';
+  html += '<div class="sec-head"><div class="sec-title"><span class="ico">🗓️</span>รอบต่อภาษี</div></div><div class="road"></div>';
+  html += renewalGroupsHtml(V);
 
-  /* --- ต่อ พรบ./ประกัน/ภาษี จัดกลุ่มรายไตรมาส (แทนการ์ดรายเดือน + รายการ 90 วันเดิม) --- */
-  html += '<div class="sec-head"><div class="sec-title"><span class="ico">🗓️</span>ต่อ พรบ. / ประกัน / ภาษี รายไตรมาส</div></div><div class="road"></div>';
-  html += quarterGridHtml(res.data.vehicles);
+  html += '<div class="sec-head"><div class="sec-title"><span class="ico">🏁</span>อันดับรถ</div></div><div class="road"></div>';
+  html += leaderboardHtml(V);
+
+  html += '<div class="dash-grid" style="margin-top:14px">' + donutCardHtml(V.filter(function(v){ return !v._inactive; })) + costSparkCardHtml() + '</div>';
 
   el('dashboardContent').innerHTML = html;
-
-  /* animate */
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      var arc = el('gaugeArc');
-      if (arc) arc.style.strokeDashoffset = (ARC * (1 - pct / 100)).toFixed(1);
-    });
-  });
-  countUp(el('gaugePct'), pct, '%');
-  countUp(el('cntRed'), s.red); countUp(el('cntYellow'), s.yellow); countUp(el('cntGreen'), s.green);
+  bindLot();
   var totalEl = el('costTotalNum');
   if (totalEl && totalEl.dataset.v) countUp(totalEl, Number(totalEl.dataset.v));
 }
 function goVehicles(urg){ switchTab('vehicles'); setUrgFilter(urg); }
 
-/* ---------- Quarter grid ----------
-   ไตรมาสปฏิทิน: Q1 ม.ค.–มี.ค. / Q2 เม.ย.–มิ.ย. / Q3 ก.ค.–ก.ย. / Q4 ต.ค.–ธ.ค.
-   แสดง: "เลยกำหนด" (ถ้ามี) + ไตรมาสนี้ + อีก 3 ไตรมาสข้างหน้า (ครบ 1 ปี)
-   ไม่รวมรถที่จอด/ขายแล้ว */
-var DOC_LABELS = [['_actExpiry','พรบ.'], ['_insuranceExpiry','ประกัน'], ['_plateExpiry','ภาษี']];
-function quarterGridHtml(vehicles){
-  var now = new Date();
-  var curQ = Math.floor(now.getMonth() / 3), curY = now.getFullYear();
-  var quarters = [];
-  for (var i = 0; i < 4; i++){
-    var q = (curQ + i) % 4, y = curY + Math.floor((curQ + i) / 4);
-    quarters.push({ key: y + '-' + q, q: q, y: y, items: [] });
-  }
-  var overdue = [], qMap = {};
-  quarters.forEach(function(Q){ qMap[Q.key] = Q; });
-
-  vehicles.forEach(function(v){
-    if (v._inactive) return;
-    DOC_LABELS.forEach(function(pair){
-      var info = v[pair[0]];
-      if (!info || !info.date || info.daysLeft === null || info.daysLeft === undefined) return;
-      var d = new Date(info.date);
-      if (isNaN(d.getTime())) return;
-      var item = { v: v, label: pair[1], d: d, info: info };
-      if (info.daysLeft < 0){ overdue.push(item); return; }
-      var k = d.getFullYear() + '-' + Math.floor(d.getMonth() / 3);
-      if (qMap[k]) qMap[k].items.push(item);
+/* ---------- ฉาก: สร้าง + แคช (สร้างใหม่เฉพาะเมื่อข้อมูลรถ/ธีมเปลี่ยน) ---------- */
+var LOT_MEM = {};
+function lotSceneHtml(V){
+  var night = document.documentElement.getAttribute('data-theme') === 'dark';
+  var sig = (night ? 'n' : 'd') + '|' + V.map(function(v){
+    return [v.ID, v['ทะเบียนรถ'], v['ประเภทรถ'], v['ยี่ห้อ'], v['รุ่น'], v['สี'], v['รูปทรงรถ'], v._inactive ? 1 : 0, v._lotUrgent ? 1 : 0, v._lotService ? 1 : 0].join('~');
+  }).join('|');
+  var h = 0; for (var i = 0; i < sig.length; i++) h = (h * 31 + sig.charCodeAt(i)) | 0;
+  var key = 'v5_' + h;
+  if (LOT_MEM[key]) return LOT_MEM[key];
+  try { var c = JSON.parse(localStorage.getItem('vh_lot') || 'null'); if (c && c.k === key){ LOT_MEM[key] = c.svg; return c.svg; } } catch(e){}
+  var svg;
+  try { svg = buildLotScene(V, { night: night }).svg; }
+  catch(e){ console.error('lot scene', e); return '<div class="empty"><div class="t">แสดงฉากไม่ได้</div></div>'; }
+  LOT_MEM[key] = svg;
+  try { localStorage.setItem('vh_lot', JSON.stringify({ k: key, svg: svg })); } catch(e){}
+  return svg;
+}
+function lotFilter(f){
+  var w = el('lotWrap'); if (!w) return;
+  w.className = 'lot-wrap' + (f ? ' f ' + f : '');
+  document.querySelectorAll('.lot-chip').forEach(function(b){ b.classList.toggle('active', b.dataset.f === f); });
+}
+function bindLot(){
+  var wrap = el('lotWrap'), stage = el('lotStage'), tip = el('lotTip');
+  if (!wrap || wrap.dataset.bound) return;
+  wrap.dataset.bound = '1';
+  var byId = {}; STATE.vehicles.forEach(function(v){ byId[v.ID] = v; });
+  var showTip = function(g){
+    var v = byId[g.getAttribute('data-id')]; if (!v) return;
+    var d = [['พรบ.', v._actExpiry], ['ประกัน', v._insuranceExpiry], ['ภาษี', v._plateExpiry]].filter(function(p){ return p[1] && p[1].daysLeft !== null && p[1].daysLeft !== undefined; })
+      .sort(function(a, b){ return a[1].daysLeft - b[1].daysLeft; })[0];
+    tip.innerHTML = '<div class="lt-plate">' + esc(v['ทะเบียนรถ']) + '</div>' +
+      '<div class="lt-model">' + esc([v['ยี่ห้อ'], v['รุ่น']].filter(String).join(' ') || '-') + '</div>' +
+      '<div class="lt-row">👤 ' + esc(v['ผู้ใช้งาน/คนขับหลัก'] || '-') + '</div>' +
+      (v['เลขไมล์ล่าสุด'] ? '<div class="lt-row">🛣️ ' + formatMoney(v['เลขไมล์ล่าสุด']) + ' กม.</div>' : '') +
+      (v._inactive ? '<div class="lt-row" style="color:var(--text-3)">⏸ ' + esc(v['สถานะรถ']) + '</div>'
+        : (d ? '<div class="lt-row"><span class="days-tag ' + d[1].urgency + '">' + d[0] + ' ' + daysText(d[1]) + '</span></div>' : ''));
+    var r = g.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+    tip.style.left = Math.min(Math.max(8, r.left - wr.left + r.width / 2 - 85), wr.width - 178) + 'px';
+    tip.style.top = Math.max(6, r.top - wr.top - tip.offsetHeight - 6) + 'px';
+    tip.classList.add('show');
+  };
+  stage.addEventListener('mouseover', function(e){ var g = e.target.closest('.lot-car, .lot-pin'); if (g){ var car = stage.querySelector('.lot-car[data-id="' + g.getAttribute('data-id') + '"]'); if (car) showTip(car); } });
+  stage.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
+  stage.addEventListener('click', function(e){
+    var g = e.target.closest('.lot-car, .lot-pin'); if (!g) return;
+    var id = g.getAttribute('data-id');
+    if (window.matchMedia('(hover: none)').matches && !tip.classList.contains('show')){ showTip(stage.querySelector('.lot-car[data-id="' + id + '"]')); setTimeout(function(){ openDetail(id); }, 350); return; }
+    openDetail(id);
+  });
+  /* เอียงฉากตามเมาส์ (เดสก์ท็อป) — ให้ความรู้สึกมีมิติ */
+  if (window.matchMedia('(hover: hover)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    wrap.addEventListener('pointermove', function(e){
+      var r = wrap.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      stage.style.transform = 'perspective(1400px) rotateY(' + (x * 4).toFixed(2) + 'deg) rotateX(' + (-y * 3).toFixed(2) + 'deg) scale(1.015)';
     });
-  });
+    wrap.addEventListener('pointerleave', function(){ stage.style.transform = ''; });
+  }
+  /* มือถือ: ฉากกว้างกว่าจอ เลื่อนซ้ายขวาได้ เริ่มที่กลางลาน */
+  requestAnimationFrame(function(){ wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) * 0.42; });
+}
 
-  var rowHtml = function(it){
-    var cls = it.info.daysLeft < 0 || it.info.daysLeft <= 7 ? 'red' : it.info.daysLeft <= 30 ? 'yellow' : '';
-    var when = it.info.daysLeft < 0 ? 'เลย ' + Math.abs(it.info.daysLeft) + ' วัน' : it.d.getDate() + ' ' + TH_M[it.d.getMonth()];
-    return '<div class="q-row" onclick="openDetail(\'' + esc(it.v.ID) + '\')" title="' + esc((it.v['ยี่ห้อ'] || '') + ' ' + (it.v['รุ่น'] || '')) + '">' +
-      '<span class="d">' + when + '</span><span class="p">' + esc(it.v['ทะเบียนรถ']) + '</span>' +
-      '<span class="t ' + cls + '">' + it.label + '</span></div>';
-  };
-  var byDate = function(a, b){ return a.d - b.d; };
-  var cardHtml = function(cls, title, sub, items){
-    items.sort(byDate);
-    return '<div class="q-card anim-in ' + cls + (items.length ? '' : ' empty') + '">' +
-      '<div class="q-head"><b>' + title + '</b><span>' + sub + '</span><span class="q-cnt">' + items.length + '</span></div>' +
-      (items.length ? items.map(rowHtml).join('') : '<div class="q-none">ไม่มีรายการ</div>') + '</div>';
-  };
-
-  var html = '<div class="q-grid">';
-  if (overdue.length) html += cardHtml('over', '⚠️ เลยกำหนด', 'ต่อด่วน', overdue);
-  quarters.forEach(function(Q, i){
-    var m1 = TH_M[Q.q * 3], m3 = TH_M[Q.q * 3 + 2];
-    html += cardHtml(i === 0 ? 'now' : '', 'Q' + (Q.q + 1) + '/' + String(Q.y + 543).slice(-2),
-      m1 + '–' + m3 + (i === 0 ? ' • ไตรมาสนี้' : ''), Q.items);
+/* ---------- รอบต่อภาษี (ธ.ค. / มี.ค. / ก.ค.) ---------- */
+function renewalGroupsHtml(V){
+  var active = V.filter(function(v){ return !v._inactive; });
+  var cards = RENEWAL_GROUPS.map(function(G){
+    var cars = active.filter(function(v){ return renewalGroupOf(v) === G.key && v._plateExpiry && v._plateExpiry.date; })
+      .map(function(v){ var e = new Date(v._plateExpiry.date); return { v: v, exp: e, days: v._plateExpiry.daysLeft, open: new Date(e.getTime() - 90 * 86400000) }; })
+      .sort(function(a, b){ return a.exp - b.exp; });
+    /* วันไปต่อของรอบนี้ = วันที่ 3 ของเดือนรอบ ครั้งถัดไป (ยังนับเป็นรอบปัจจุบันจนเลยไป 30 วัน) */
+    var now = new Date(); now.setHours(0, 0, 0, 0);
+    var plan = new Date(now.getFullYear(), G.month, 3);
+    if (plan < new Date(now.getTime() - 30 * 86400000)) plan = new Date(now.getFullYear() + 1, G.month, 3);
+    /* คันที่ต้องต่อในรอบนี้ = หมดอายุไม่เกิน 4 เดือนหลังวันไปต่อ (ที่เหลือ = ต่อของปีนี้ไปแล้ว) */
+    var limit = new Date(plan.getTime() + 120 * 86400000);
+    cars.forEach(function(c){ c.pending = c.exp <= limit; });
+    var pending = cars.filter(function(c){ return c.pending; });
+    var deadline = pending.length ? pending[0].exp : null;
+    var head;
+    if (!cars.length) head = '<div class="rg-when muted">ยังไม่มีรถในรอบนี้</div>';
+    else if (!pending.length) head = '<div class="rg-when"><span class="rg-ok">✓ ต่อครบทุกคันแล้ว</span></div>';
+    else {
+      var dp = daysUntil(plan), dd = daysUntil(deadline);
+      var cd = dd < 0 ? '<span class="rg-cd red">เลยกำหนด ' + Math.abs(dd) + ' วัน</span>'
+        : dp > 0 ? '<span class="rg-cd">อีก ' + dp + ' วัน</span>' : '<span class="rg-cd red">ถึงรอบแล้ว</span>';
+      head = '<div class="rg-when">ไปต่อ <b>' + thDate(plan) + '</b> ' + cd + '</div>' +
+             '<div class="rg-dead">ต้องเสร็จก่อน <b>' + thDate(deadline) + '</b></div>';
+    }
+    var rows = cars.map(function(c){
+      var st = !c.pending ? ['green', 'ต่อแล้ว ✓'] : c.days < 0 ? ['red', 'เลยกำหนด'] : c.days <= 90 ? ['amber', 'ต่อได้แล้ว']
+        : c.open > plan ? ['red', 'วันนัดยังต่อไม่ได้'] : ['gray', 'รอถึงรอบ'];
+      return '<div class="rg-row" onclick="openDetail(\'' + esc(c.v.ID) + '\')">' + carChipHtml(c.v, 'xs') +
+        '<div class="rg-main"><div class="rg-plate">' + esc(c.v['ทะเบียนรถ']) + '</div><div class="rg-owner">' + esc(ownerOf(c.v) || c.v['ผู้ใช้งาน/คนขับหลัก'] || '-') + '</div></div>' +
+        '<div class="rg-dates"><div class="rg-exp">' + thDate(c.exp) + '</div><div class="rg-win">ต่อได้ ' + thDate(c.open, false) + '–' + thDate(c.exp, false) + '</div></div>' +
+        '<span class="rg-st ' + st[0] + '">' + st[1] + '</span></div>';
+    }).join('');
+    return '<div class="rg-card anim-in" style="--rg:' + G.color + '">' +
+      '<div class="rg-top"><div class="rg-name">' + G.name + '<span>' + cars.length + ' คัน</span></div>' + head + '</div>' +
+      (rows || '<div class="q-none" style="padding:10px 14px">—</div>') + '</div>';
   });
-  return html + '</div>';
+  var loose = active.filter(function(v){ return !renewalGroupOf(v) && v._plateExpiry && v._plateExpiry.date; });
+  var extra = loose.length ? '<div class="rg-loose">ยังไม่ได้จัดรอบ: ' + loose.map(function(v){
+    return '<a onclick="openDetail(\'' + esc(v.ID) + '\')">' + esc(v['ทะเบียนรถ']) + ' <small>(' + thDate(new Date(v._plateExpiry.date)) + ')</small></a>'; }).join(' • ') +
+    (isOwner() ? ' — ตั้งรอบได้ในฟอร์มแก้ไขรถ' : '') + '</div>' : '';
+  return '<div class="rg-grid">' + cards.join('') + '</div>' + extra;
+}
+
+/* ---------- Leaderboard ---------- */
+function leaderboardHtml(V){
+  var active = V.filter(function(v){ return !v._inactive; });
+  var byPlate = {}; active.forEach(function(v){ byPlate[v['ทะเบียนรถ']] = v; });
+  var board = function(title, icon, rows, fmt, unit){
+    var max = rows.length ? rows[0].val : 1;
+    return '<div class="lb-card anim-in"><div class="lb-head"><span>' + icon + ' ' + title + '</span></div>' +
+      (rows.length ? rows.map(function(r, i){
+        return '<div class="lb-row" onclick="openDetail(\'' + esc(r.v.ID) + '\')"><span class="lb-pos p' + (i + 1) + '">' + (i + 1) + '</span>' + carChipHtml(r.v, 'xs') +
+          '<div class="lb-main"><div class="lb-top"><b>' + esc(r.v['ทะเบียนรถ']) + '</b><span>' + fmt(r.val) + ' ' + unit + '</span></div>' +
+          '<div class="lb-bar"><i style="width:' + Math.max(4, Math.round(r.val / max * 100)) + '%"></i></div></div></div>';
+      }).join('') : '<div class="q-none" style="padding:14px">ยังไม่มีข้อมูล</div>') + '</div>';
+  };
+  var km = active.filter(function(v){ return Number(v['เลขไมล์ล่าสุด']) > 0; })
+    .map(function(v){ return { v: v, val: Number(v['เลขไมล์ล่าสุด']) }; }).sort(function(a, b){ return b.val - a.val; }).slice(0, 5);
+  var cost = {}, cnt = {}, since = Date.now() - 365 * 86400000;
+  (STATE.maintAll || []).forEach(function(m){
+    var d = new Date(m['วันที่บันทึก']); if (isNaN(d) || d < since || !byPlate[m['ทะเบียนรถ']]) return;
+    cost[m['ทะเบียนรถ']] = (cost[m['ทะเบียนรถ']] || 0) + (Number(m['ค่าใช้จ่าย (บาท)']) || 0);
+    cnt[m['ทะเบียนรถ']] = (cnt[m['ทะเบียนรถ']] || 0) + 1;
+  });
+  var top = function(obj){ return Object.keys(obj).filter(function(p){ return obj[p] > 0; }).map(function(p){ return { v: byPlate[p], val: obj[p] }; })
+    .sort(function(a, b){ return b.val - a.val; }).slice(0, 5); };
+  return '<div class="lb-grid">' +
+    board('เลขไมล์สูงสุด', '🛣️', km, formatMoney, 'กม.') +
+    board('ค่าซ่อมสูงสุด (12 เดือน)', '💸', top(cost), formatMoney, '฿') +
+    board('เข้าอู่บ่อยสุด (12 เดือน)', '🔧', top(cnt), String, 'ครั้ง') + '</div>';
 }
 
 function donutCardHtml(vehicles){
@@ -2117,7 +2522,7 @@ function openDetail(id){
 
   loadDetailSchedules(v['ทะเบียนรถ']);
 
-  google.script.run.withSuccessHandler(function(res){
+  var renderMaint = function(res){
     var box = el('detailMaint');
     if (!box) return;
     if (!res.success || !res.data.length){
@@ -2128,7 +2533,9 @@ function openDetail(id){
       '<span class="cost-tag">' + formatMoney(totalCost) + ' บาท</span></div>' +
       '<div class="tl">' + res.data.slice(0, 5).map(function(m,i){ return tlItemHtml(m, i, true); }).join('') + '</div>' +
       (res.data.length > 5 ? '<div class="muted" style="text-align:center">ดูทั้งหมดได้ที่แท็บ "ซ่อมบำรุง"</div>' : '');
-  }).withFailureHandler(function(){}).getMaintenanceLogs(v['ทะเบียนรถ']);
+  };
+  if (STATE.maintAll) renderMaint({ success: true, data: STATE.maintAll.filter(function(m){ return String(m['ทะเบียนรถ']) === String(v['ทะเบียนรถ']); }) });
+  else google.script.run.withSuccessHandler(renderMaint).withFailureHandler(function(){}).getMaintenanceLogs(v['ทะเบียนรถ']);
 }
 function detailExpLine(name, info){
   var txt = daysText(info);
@@ -2291,9 +2698,8 @@ function loadMaintenance(){
   var plate = el('maintVehicleFilter') ? el('maintVehicleFilter').value : '';
   el('maintenanceContent').dataset.loaded = '1';
   el('maintenanceContent').innerHTML = '<div class="skel"></div><div class="skel"></div>';
-  google.script.run.withSuccessHandler(function(res){
+  var render = function(res){
     if (!res.success){ el('maintenanceContent').innerHTML = '<div class="err">' + esc(res.error) + '</div>'; return; }
-    if (!plate) STATE.maintAll = res.data;
     if (!res.data.length){
       el('maintenanceContent').innerHTML = '<div class="empty"><div class="t">ยังไม่มีประวัติการซ่อมบำรุง</div><div class="s">กด + เพื่อบันทึกงานซ่อมครั้งแรก</div></div>';
       return;
@@ -2304,7 +2710,17 @@ function loadMaintenance(){
         '<div><div class="muted">รวม ' + res.data.length + ' รายการ</div>' +
         '<div class="big-num">' + formatMoney(totalCost) + ' <small>บาท</small></div></div><span style="font-size:30px">🔧</span></div>' +
       '<div class="tl">' + res.data.map(function(m,i){ return tlItemHtml(m, i, !plate); }).join('') + '</div>';
-  }).withFailureHandler(onFatalError).getMaintenanceLogs(plate);
+  };
+  /* มีข้อมูลทุกคันอยู่แล้ว (โหลดตอนเปิดแอป) → กรองในเครื่องทันที ไม่ต้องรอเซิร์ฟเวอร์ */
+  if (STATE.maintAll){
+    render({ success: true, data: plate ? STATE.maintAll.filter(function(m){ return String(m['ทะเบียนรถ']) === String(plate); }) : STATE.maintAll });
+    return;
+  }
+  google.script.run.withSuccessHandler(function(res){
+    if (res.success) STATE.maintAll = res.data;
+    if (!el('maintVehicleFilter') || el('maintVehicleFilter').value === plate)
+      render(res.success && plate ? { success: true, data: res.data.filter(function(m){ return String(m['ทะเบียนรถ']) === String(plate); }) } : res);
+  }).withFailureHandler(onFatalError).getMaintenanceLogs('');
 }
 function tlItemHtml(m, idx, showPlate){
   var icon = MAINT_ICONS[m['ประเภทงาน']] || '🔧';
@@ -2449,6 +2865,8 @@ function openVehicleForm(id){
     el('vf_spec_fuelfilter').value = v['สเปกกรองโซล่า/เชื้อเพลิง'] || '';
     el('vf_fueltype').value = v['ชนิดเชื้อเพลิง'] || '';
     el('vf_shape').value = v['รูปทรงรถ'] || '';
+    el('vf_rgroup').value = renewalGroupOf(v);
+    el('vf_owner').value = ownerOf(v);
     setDateSelectValue('vf_act', v['วันที่ พรบ. หมดอายุ']);
     setDateSelectValue('vf_ins', v['วันประกันหมดอายุ']);
     setDateSelectValue('vf_pd', v['วันภาษี/ทะเบียนหมดอายุ']);
@@ -2494,6 +2912,8 @@ function submitVehicleForm(e){
     data['เลขกรมธรรม์'] = el('vf_policy').value;
     data['วันประกันหมดอายุ'] = getDateSelectValue('vf_ins');
     data['วันภาษี/ทะเบียนหมดอายุ'] = getDateSelectValue('vf_pd');
+    data['กลุ่มต่อภาษี'] = el('vf_rgroup').value;
+    data['ผู้ถือกรรมสิทธิ์'] = el('vf_owner').value;
   }
   var done = function(){
     btn.classList.remove('loading');
@@ -2651,7 +3071,7 @@ function schedRowHtml(s){
     schedChipHtml(s) + act + '</div>';
 }
 function loadDetailSchedules(plate){
-  google.script.run.withSuccessHandler(function(res){
+  var render = function(res){
     var box = el('detailSchedules');
     if (!box) return;
     if (!res.success){ box.innerHTML = '<div class="muted" style="padding:4px 2px">' + esc(res.error || 'โหลดไม่สำเร็จ') + '</div>'; return; }
@@ -2660,7 +3080,9 @@ function loadDetailSchedules(plate){
       ? '<div class="exp-big">' + res.data.map(schedRowHtml).join('') + '</div>'
       : '<div class="muted" style="padding:4px 2px">ยังไม่ได้ตั้งรอบ' + (canEdit() ? ' — กด "➕ เพิ่มรอบ" เช่น น้ำมันเครื่องทุก 10,000 กม.' : '') + '</div>';
     STATE._schedPlate = plate;
-  }).withFailureHandler(function(){}).getSchedules(plate);
+  };
+  if (STATE.schedAll) render({ success: true, data: STATE.schedAll.filter(function(s){ return String(s['ทะเบียนรถ']) === String(plate); }) });
+  else google.script.run.withSuccessHandler(render).withFailureHandler(function(){}).getSchedules(plate);
 }
 function openScheduleForm(plate, schedId){
   var s = null;
@@ -2700,14 +3122,14 @@ function submitScheduleForm(e){
     btn.classList.remove('loading');
     if (!res.success){ toast('⚠️ ' + (res.error || 'บันทึกไม่สำเร็จ')); return; }
     closeOverlay('schedOverlay');
-    toast('บันทึกรอบเรียบร้อย');
+    toast('บันทึกรอบเรียบร้อย'); STATE.schedAll = null;
     if (el('detailOverlay').classList.contains('show')) loadDetailSchedules(data['ทะเบียนรถ']);
   }).withFailureHandler(function(err){ btn.classList.remove('loading'); onFatalError(err); }).saveSchedule(data);
 }
 function deleteScheduleClick(id){
   if (!confirm('ลบรอบเปลี่ยนถ่ายรายการนี้?')) return;
   google.script.run.withSuccessHandler(function(){
-    toast('ลบเรียบร้อย');
+    toast('ลบเรียบร้อย'); STATE.schedAll = null;
     if (STATE._schedPlate) loadDetailSchedules(STATE._schedPlate);
   }).withFailureHandler(onFatalError).deleteSchedule(id);
 }
