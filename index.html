@@ -146,6 +146,8 @@
     .card.urg-yellow{border-left:4px solid var(--amber);}
     .card.urg-green{border-left:4px solid var(--green);}
     .card.urg-none{border-left:4px solid var(--border-strong);}
+    .card.urg-inactive{border-left:4px solid var(--border);opacity:.55;filter:grayscale(.6);}
+    .card.urg-inactive:hover{opacity:.85;}
 
     /* ============ VEHICLE CARD ============ */
     .v-card{display:flex;gap:13px;align-items:flex-start;}
@@ -300,6 +302,53 @@
     }
     .batch-card .mo{font-size:12px;font-weight:800;color:var(--accent);}
     .batch-card .pl{font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.7;font-weight:600;}
+
+    /* ============ QUARTER RENEWAL CARDS (v4) ============ */
+    .q-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;}
+    .q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 12px 6px;
+      box-shadow:var(--shadow-card);border-top:3px solid var(--accent);}
+    .q-card.now{border-top-color:var(--amber);}
+    .q-card.over{border-top-color:var(--red);}
+    .q-card.empty{opacity:.6;}
+    .q-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+    .q-head b{font-size:14px;font-weight:800;color:var(--text-1);}
+    .q-head span{font-size:11.5px;color:var(--text-3);font-weight:600;}
+    .q-head .q-cnt{margin-left:auto;background:var(--accent-soft);color:var(--accent);border-radius:9px;padding:1px 8px;font-size:11.5px;font-weight:800;}
+    .q-card.now .q-cnt{background:var(--amber-soft);color:var(--amber-text);}
+    .q-card.over .q-cnt{background:var(--red-soft);color:var(--red);}
+    .q-row{display:flex;align-items:center;gap:8px;padding:7px 2px;border-top:1px dashed var(--border);cursor:pointer;font-size:12.5px;}
+    .q-row:first-of-type{border-top:none;}
+    .q-row:hover{background:var(--card-2);border-radius:8px;}
+    .q-row .d{min-width:46px;font-weight:800;color:var(--text-2);}
+    .q-row .p{flex:1;min-width:0;font-weight:700;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .q-row .t{font-size:11px;font-weight:700;border-radius:7px;padding:1px 7px;background:var(--gray-soft);color:var(--text-2);white-space:nowrap;}
+    .q-row .t.red{background:var(--red-soft);color:var(--red);}
+    .q-row .t.yellow{background:var(--amber-soft);color:var(--amber-text);}
+    .q-none{font-size:12px;color:var(--text-4);padding:8px 2px 10px;}
+
+    /* ============ CAR ICON + PHOTOS (v4) ============ */
+    .car-chip{width:64px;height:52px;border-radius:15px;flex-shrink:0;position:relative;overflow:hidden;
+      background:radial-gradient(120% 90% at 50% 100%, var(--card-2), var(--bg-2));
+      border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;}
+    .car-chip svg{width:58px;height:auto;display:block;}
+    .car-chip.lg{width:96px;height:72px;border-radius:18px;}
+    .car-chip.lg svg{width:88px;}
+    .car-chip .brand-badge{position:absolute;right:3px;bottom:3px;width:17px;height:17px;border-radius:6px;
+      background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.35);}
+    .car-chip.lg .brand-badge{width:22px;height:22px;right:5px;bottom:5px;}
+    .car-chip .brand-badge img{width:72%;height:72%;object-fit:contain;}
+    .car-chip .brand-badge i{font-style:normal;font-size:9px;font-weight:900;color:#3a434f;}
+    .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .photo-slot{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--card-2);
+      border:1px dashed var(--border-strong);display:flex;align-items:center;justify-content:center;flex-direction:column;
+      color:var(--text-4);font-size:12px;font-weight:700;cursor:pointer;}
+    .photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+    .photo-slot .lbl{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:2px 8px;font-size:11px;font-weight:700;}
+    .photo-slot .chg{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;}
+    .photo-slot.busy::after{content:'กำลังอัปโหลด...';position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;}
+    #photoViewer{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:20px;}
+    #photoViewer.show{display:flex;}
+    #photoViewer img{max-width:100%;max-height:100%;border-radius:12px;}
 
     /* ============ MAINTENANCE TIMELINE ============ */
     .tl{position:relative;padding-left:26px;}
@@ -603,7 +652,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h-2v-5l2-5h11l3 5h2a1 1 0 0 1 1 1v4h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5"/></svg>รถทั้งหมด</button>
     <button data-tab="maintenance" onclick="switchTab('maintenance')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18a2.1 2.1 0 0 0 3 3l5.7-5.7a4.5 4.5 0 0 0 6-6L14.5 12 12 9.5z"/></svg>ซ่อมบำรุง</button>
-    <button data-tab="fuel" onclick="switchTab('fuel')">
+    <button data-tab="fuel" class="feat-fuel" onclick="switchTab('fuel')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15"/><path d="M3 21h12"/><path d="M14 10h2a2 2 0 0 1 2 2v4a1.5 1.5 0 0 0 3 0V9l-3-3"/><path d="M6 8h6"/></svg>เติมน้ำมัน</button>
     <button data-tab="report" onclick="switchTab('report')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15v3M12 10v8M17 6v12"/></svg>รายงาน</button>
@@ -652,7 +701,17 @@
       </datalist>
       <div class="f2">
         <div class="field"><label>ปี (พ.ศ.)</label><input id="vf_year" type="number"></div>
-        <div class="field"><label>สี</label><input id="vf_color"></div>
+        <div class="field"><label>สี</label><input id="vf_color" list="colorList" placeholder="เช่น ขาว, ดำ, เทา"></div>
+      </div>
+      <datalist id="colorList">
+        <option>ขาว</option><option>ดำ</option><option>เทา</option><option>เงิน/บรอนซ์</option><option>แดง</option>
+        <option>น้ำเงิน</option><option>ฟ้า</option><option>ทอง</option><option>น้ำตาล</option><option>เขียว</option>
+      </datalist>
+      <div class="field"><label>รูปทรงรถ (ใช้วาดไอคอน)</label>
+        <select id="vf_shape">
+          <option value="">อัตโนมัติ (เดาจากรุ่น)</option>
+          <option>เก๋ง</option><option>กระบะ</option><option>SUV</option><option>MPV/รถครอบครัว</option><option>รถตู้</option><option>รถบรรทุก</option>
+        </select>
       </div>
       <div class="f2">
         <div class="field"><label>เลขตัวถัง</label><input id="vf_chassis"></div>
@@ -924,7 +983,7 @@ var google = { script: {} };
 (function(){
   var METHODS = ['getUserInfo','getAllVehicles','addVehicle','updateVehicle','deleteVehicle',
     'getMaintenanceLogs','addMaintenanceLog','updateMaintenanceLog','deleteMaintenanceLog',
-    'getDashboardData','uploadAttachment','logout',
+    'getDashboardData','uploadAttachment','uploadVehiclePhoto','logout',
     'getSchedules','saveSchedule','deleteSchedule','getFuelLogs','addFuelLog'];
   function Runner(){ this._ok = function(){}; this._err = function(){}; }
   Runner.prototype.withSuccessHandler = function(f){ this._ok = f; return this; };
@@ -1025,6 +1084,7 @@ var STATE = {
    แอดมิน/DSR: บันทึกซ่อม เปลี่ยนถ่าย สเปก รอบเปลี่ยนถ่าย แก้รายละเอียดรถ
    คนขับ: ดูข้อมูล + บันทึกเติมน้ำมัน/แก๊ส
    (role ว่าง = backend เก่ายังไม่ส่ง role มา → เปิดทุกสิทธิ์เหมือนเดิม) */
+var FEATURE_FUEL = false; // ระบบบันทึกเติมน้ำมัน — ปิดไว้ก่อน (ยังไม่ให้ฝ่ายขนส่งต้องบันทึก) เปลี่ยนเป็น true เพื่อเปิด
 var SCHEDULE_ITEMS = ['น้ำมันเครื่อง','กรองน้ำมันเครื่อง','น้ำมันเกียร์','น้ำมันเบรค','น้ำยาหม้อน้ำ','สลับยาง','เปลี่ยนยาง','แบตเตอรี่','กรองอากาศ','กรองแอร์','กรองโซล่า/เชื้อเพลิง'];
 var FUEL_TYPES = ['ดีเซล','ดีเซล B7','เบนซิน 95','แก๊สโซฮอล์ 95','แก๊สโซฮอล์ 91','E20','LPG','NGV','อื่นๆ'];
 function isOwner(){ return !STATE.userRole || STATE.userRole === 'เจ้าของ'; }
@@ -1081,6 +1141,95 @@ function logoChipHtml(brandName, sizeClass){
   return '<div class="logo-chip ' + (sizeClass || '') + '">' + img +
     '<span class="fallback" style="' + (b ? 'display:none;' : '') + '">' + initial + '</span></div>';
 }
+/* ================= CAR ICON (v4) =================
+   วาดรถด้านข้างแบบกราฟิก ตาม "รูปทรงรถ" + "สี" ของแต่ละคัน
+   ถ้ายังไม่ได้ตั้งรูปทรง จะเดาจากรุ่น (Hilux → กระบะ, NLR85 → รถบรรทุก ฯลฯ) */
+var CAR_SHAPES = { 'เก๋ง':'sedan', 'กระบะ':'pickup', 'SUV':'suv', 'MPV/รถครอบครัว':'mpv', 'รถตู้':'van', 'รถบรรทุก':'truck' };
+var CAR_COLORS = [
+  [/ขาว|white/i,'#eef1f4'], [/ดำ|black/i,'#262a31'], [/เทา|gray|grey/i,'#7d8794'],
+  [/เงิน|บรอนซ์|silver/i,'#c2c9d1'], [/แดง|red/i,'#cf3b3b'], [/น้ำเงิน|กรม|blue/i,'#2f5fb3'],
+  [/ฟ้า/i,'#5aa9e6'], [/ทอง|gold|champagne/i,'#c9a560'], [/น้ำตาล|brown/i,'#7a5a3c'],
+  [/เขียว|green/i,'#3f8f5a'], [/ส้ม|orange/i,'#ee8a3c'], [/เหลือง|yellow/i,'#f0c64a']
+];
+function guessCarShape(v){
+  var set = v['รูปทรงรถ'];
+  if (set && CAR_SHAPES[set]) return CAR_SHAPES[set];
+  var t = [v['ยี่ห้อ'], v['รุ่น']].join(' ');
+  if (/NLR|NPR|NMR|FRR|ELF|Hino|Dutro|6\s*ล้อ|4\s*ล้อ|บรรทุก/i.test(t)) return 'truck';
+  if (/Hilux|Vigo|Revo|D-?max|Triton|Ranger|Navara|BT-?50|กระบะ/i.test(t)) return 'pickup';
+  if (/รถตู้|Commuter|Hiace|Ventury|Van\b/i.test(t)) return 'van';
+  if (/Avanza|Innova|Sienta|Freed|Ertiga|Xpander|Veloz|Odyssey|Alphard/i.test(t)) return 'mpv';
+  if (/\bX[1-7]\b|CR-?V|HR-?V|Fortuner|Pajero|MU-?X|CX-?\d|Everest|SUV|Corolla Cross|Yaris Cross/i.test(t)) return 'suv';
+  if (v['ประเภทรถ'] === 'รถขนส่ง') return 'truck';
+  return 'sedan';
+}
+function guessCarColor(v, shape){
+  var t = [v['สี'], v['รุ่น']].join(' ');
+  for (var i = 0; i < CAR_COLORS.length; i++) if (CAR_COLORS[i][0].test(t)) return CAR_COLORS[i][1];
+  return shape === 'truck' ? '#eef1f4' : '#c2c9d1';
+}
+function shadeHex(hex, amt){ /* amt -1..1 : ติดลบ = เข้มขึ้น */
+  var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  var f = function(c){ return Math.round(amt < 0 ? c * (1 + amt) : c + (255 - c) * amt); };
+  return '#' + ((1 << 24) | (f(r) << 16) | (f(g) << 8) | f(b)).toString(16).slice(1);
+}
+function carSvg(shape, color){
+  var dark = shadeHex(color, -0.28), light = shadeHex(color, 0.35);
+  var glass = '#1b2532', glassHi = 'rgba(255,255,255,.22)', edge = 'rgba(255,255,255,.28)';
+  var P = { /* body, windows, pillars(x), wheels(x), headlight y, extras */
+    sedan:  { body:'M8,44 L8,36 Q9,31 16,30 L30,29 L42,19 Q46,16 52,16 L72,16 Q79,16 84,20 L95,28 L108,30 Q114,31 114,37 L114,44 Z',
+              win:'M45,28 L52,19.5 L71,19.5 Q76,19.5 79,22 L86,28 Z', pil:[64], wh:[30,92], hl:32 },
+    pickup: { body:'M6,44 L6,30 L54,30 L60,18 Q62,15.5 66,15.5 L80,15.5 Q84,15.5 87,19 L95,28 L108,30 Q114,31 114,37 L114,44 Z',
+              win:'M62,28 L66.5,19 L79,19 Q82,19 84,21.5 L89.5,28 Z', pil:[75], wh:[28,94], hl:32,
+              extra:'<rect x="6" y="30" width="48" height="3" fill="' + dark + '"/>' },
+    suv:    { body:'M8,44 L8,24 Q9,17.5 16,17 L73,15 Q80,15 85,19 L95,27 L108,29 Q114,30 114,37 L114,44 Z',
+              win:'M15,27 L17,20.5 L72,18.5 Q77,18.5 81,21.5 L87,27 Z', pil:[37,61], wh:[28,94], hl:31,
+              extra:'<rect x="22" y="13.4" width="44" height="1.8" rx=".9" fill="' + dark + '"/>' },
+    mpv:    { body:'M8,44 L8,27 Q9,20 16,19 L71,17 Q78,17 84,21 L97,29 L108,30 Q114,31 114,37 L114,44 Z',
+              win:'M16,28 L18,22 L70,20.3 Q75,20.3 79,23 L87,28 Z', pil:[39,61], wh:[28,94], hl:32 },
+    van:    { body:'M6,44 L6,16 Q6,12 11,12 L91,12 Q97,12 101,17.5 L108,28 Q114,30 114,36 L114,44 Z',
+              win:'M11,16 L91,16 L91,26 L11,26 Z', pil:[31,51,71], wh:[26,96], hl:31,
+              extra:'<path d="M94,16 L99,16 L105.5,27 L94,27 Z" fill="' + glass + '"/><path d="M95,17 L98,17 L101,22 L95,22 Z" fill="' + glassHi + '"/>' },
+    truck:  { body:'M74,44 L74,14 Q74,11 78,11 L97,11 Q101,11 103,14.5 L112,30 Q114,32 114,36 L114,44 Z',
+              win:'M80,15 L97,15 Q99.5,15 100.5,17 L107,28 L80,28 Z', pil:[], wh:[24,98], hl:32,
+              pre:'<rect x="4" y="7" width="68" height="34" rx="2.5" fill="#d6dce3" stroke="rgba(0,0,0,.18)" stroke-width=".8"/>' +
+                  '<rect x="4" y="7" width="68" height="4" rx="2" fill="#eef1f4"/>' +
+                  '<path d="M21,11 V41 M38,11 V41 M55,11 V41" stroke="rgba(0,0,0,.08)" stroke-width="1"/>' +
+                  '<rect x="4" y="40" width="108" height="4" fill="#2a3038"/>' }
+  }[shape] || null;
+  if (!P) return carSvg('sedan', color);
+  var s = '<svg viewBox="0 0 120 58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<ellipse cx="60" cy="53" rx="55" ry="3.2" fill="rgba(0,0,0,.35)"/>' + (P.pre || '') +
+    '<path d="' + P.body + '" fill="' + color + '" stroke="' + edge + '" stroke-width=".8"/>' +
+    (P.extra || '') +
+    '<path d="' + P.win + '" fill="' + glass + '"/>';
+  /* เสาหน้าต่าง: ตัดให้อยู่ในกรอบหน้าต่างพอดี (ไม่ทะลุหลังคา) */
+  var wy = { sedan:[19.5,28], pickup:[19,28], suv:[18.5,27], mpv:[20.3,28], van:[16,26] }[shape] || [18,28];
+  P.pil.forEach(function(x){ s += '<rect x="' + (x - 1.1) + '" y="' + wy[0] + '" width="2.2" height="' + (wy[1] - wy[0]) + '" fill="' + color + '"/>'; });
+  s += '<rect x="' + (shape === 'truck' ? 76 : 12) + '" y="39.5" width="' + (shape === 'truck' ? 34 : 98) + '" height="2" fill="' + dark + '" opacity=".7"/>' +
+    '<rect x="108.5" y="' + P.hl + '" width="5" height="3" rx="1.2" fill="#fff4cc"/>' +
+    (shape === 'truck' ? '' : '<rect x="' + (shape === 'pickup' || shape === 'van' ? 6 : 8) + '" y="' + (P.hl - 0.5) + '" width="3" height="4" rx="1" fill="#ff5252"/>');
+  P.wh.forEach(function(x){
+    s += '<circle cx="' + x + '" cy="45" r="10" fill="#0d1218"/><circle cx="' + x + '" cy="45" r="8" fill="#232a33"/>' +
+         '<circle cx="' + x + '" cy="45" r="4.2" fill="#aeb7c2"/><circle cx="' + x + '" cy="45" r="1.6" fill="#59626d"/>';
+  });
+  return s + '</svg>';
+}
+function carChipHtml(v, sizeClass){
+  var shape = guessCarShape(v), color = guessCarColor(v, shape);
+  var b = getBrand(v['ยี่ห้อ']);
+  var initial = v['ยี่ห้อ'] ? esc(String(v['ยี่ห้อ']).trim().charAt(0).toUpperCase()) : '';
+  var badge = b
+    ? '<span class="brand-badge"><img src="https://cdn.simpleicons.org/' + b.slug + '" alt="" loading="lazy" onerror="this.outerHTML=\'<i>' + initial + '</i>\'"></span>'
+    : (initial ? '<span class="brand-badge"><i>' + initial + '</i></span>' : '');
+  return '<div class="car-chip ' + (sizeClass || '') + '" title="' + esc((v['ยี่ห้อ'] || '') + ' ' + (v['รุ่น'] || '')) + '">' + carSvg(shape, color) + badge + '</div>';
+}
+/* รูปจริงใน Drive → ลิงก์รูปย่อที่ <img> แสดงได้ */
+function drivePhotoSrc(url, w){
+  var m = String(url || '').match(/\/d\/([\w-]{10,})|[?&]id=([\w-]{10,})/);
+  return m ? 'https://drive.google.com/thumbnail?id=' + (m[1] || m[2]) + '&sz=w' + (w || 800) : '';
+}
+
 function plateTagHtml(plate, province){
   return '<span class="plate-tag">' + esc(plate || '-') +
     (province ? '<small>' + esc(province) + '</small>' : '') + '</span>';
@@ -1142,7 +1291,9 @@ function applyRoleUi(){
   // ปุ่มที่ต้องเป็น เจ้าของ เท่านั้น (เพิ่มรถ)
   document.querySelectorAll('.need-owner').forEach(function(b){ b.style.display = isOwner() ? '' : 'none'; });
   // คนขับ → เปิดหน้าเติมน้ำมันเป็นหน้าแรก (ใช้งานบ่อยสุด)
-  if (!canEdit()) switchTab('fuel');
+  // ฟีเจอร์เติมน้ำมัน: ปิดไว้ก่อน (เปิดได้โดยตั้ง FEATURE_FUEL = true)
+  document.querySelectorAll('.feat-fuel').forEach(function(b){ b.style.display = FEATURE_FUEL ? '' : 'none'; });
+  if (!canEdit() && FEATURE_FUEL) switchTab('fuel');
 }
 function onFatalError(err){
   el('authError').style.display = 'block';
@@ -1198,7 +1349,8 @@ function renderDashboard(res, isRerender){
         '<div class="gauge-center"><div class="big" id="gaugePct">0%</div><div class="sub">สถานะปกติ</div></div>' +
       '</div>' +
       '<div class="hero-side">' +
-        '<h2>สวัสดี 👋</h2><div class="date">' + dateStr + ' • รถทั้งหมด ' + total + ' คัน</div>' +
+        '<h2>สวัสดี 👋</h2><div class="date">' + dateStr + ' • ใช้งานอยู่ ' + total + ' คัน' +
+          (s.inactive ? ' <span class="muted">(จอด/ขายแล้ว ' + s.inactive + ')</span>' : '') + '</div>' +
         '<div class="stat-mini">' +
           '<div class="stat-line" onclick="goVehicles(\'red\')"><span class="dot d-red"></span>ต้องรีบต่อ (≤7 วัน)<b style="color:var(--red)" id="cntRed">0</b></div>' +
           '<div class="stat-line" onclick="goVehicles(\'yellow\')"><span class="dot d-yellow"></span>ใกล้กำหนด (≤30 วัน)<b style="color:var(--amber-text)" id="cntYellow">0</b></div>' +
@@ -1210,27 +1362,13 @@ function renderDashboard(res, isRerender){
 
   /* --- grid: donut by type + cost spark --- */
   html += '<div class="dash-grid">';
-  html += donutCardHtml(res.data.vehicles);
+  html += donutCardHtml(res.data.vehicles.filter(function(v){ return !v._inactive; }));
   html += costSparkCardHtml();
   html += '</div>';
 
-  /* --- batch groups --- */
-  var batchKeys = Object.keys(res.data.batchGroups || {}).sort();
-  if (batchKeys.length){
-    html += '<div class="sec-head"><div class="sec-title"><span class="ico">💡</span>แนะนำต่อพร้อมกัน (ลดรอบเดินทาง)</div></div><div class="road"></div>';
-    html += '<div class="batch-scroll">' + batchKeys.map(function(mk){
-      var items = res.data.batchGroups[mk];
-      var plates = items.map(function(i){ return i.plate; }).filter(function(v,i,a){ return a.indexOf(v) === i; });
-      var parts = mk.split('-');
-      var moName = TH_M[Number(parts[1]) - 1] + ' ' + (Number(parts[0]) + 543);
-      return '<div class="batch-card anim-in"><div class="mo">📅 ' + moName + '</div><div class="pl">' +
-        plates.map(esc).join(' • ') + '<br><span class="muted">' + items.length + ' รายการ</span></div></div>';
-    }).join('') + '</div>';
-  }
-
-  /* --- upcoming expiries --- */
-  html += '<div class="sec-head"><div class="sec-title"><span class="ico">⏰</span>ใกล้ครบกำหนด 90 วัน</div></div><div class="road"></div>';
-  html += '<div class="card" style="padding:6px 14px;">' + upcomingListHtml(res.data.vehicles) + '</div>';
+  /* --- ต่อ พรบ./ประกัน/ภาษี จัดกลุ่มรายไตรมาส (แทนการ์ดรายเดือน + รายการ 90 วันเดิม) --- */
+  html += '<div class="sec-head"><div class="sec-title"><span class="ico">🗓️</span>ต่อ พรบ. / ประกัน / ภาษี รายไตรมาส</div></div><div class="road"></div>';
+  html += quarterGridHtml(res.data.vehicles);
 
   el('dashboardContent').innerHTML = html;
 
@@ -1247,6 +1385,61 @@ function renderDashboard(res, isRerender){
   if (totalEl && totalEl.dataset.v) countUp(totalEl, Number(totalEl.dataset.v));
 }
 function goVehicles(urg){ switchTab('vehicles'); setUrgFilter(urg); }
+
+/* ---------- Quarter grid ----------
+   ไตรมาสปฏิทิน: Q1 ม.ค.–มี.ค. / Q2 เม.ย.–มิ.ย. / Q3 ก.ค.–ก.ย. / Q4 ต.ค.–ธ.ค.
+   แสดง: "เลยกำหนด" (ถ้ามี) + ไตรมาสนี้ + อีก 3 ไตรมาสข้างหน้า (ครบ 1 ปี)
+   ไม่รวมรถที่จอด/ขายแล้ว */
+var DOC_LABELS = [['_actExpiry','พรบ.'], ['_insuranceExpiry','ประกัน'], ['_plateExpiry','ภาษี']];
+function quarterGridHtml(vehicles){
+  var now = new Date();
+  var curQ = Math.floor(now.getMonth() / 3), curY = now.getFullYear();
+  var quarters = [];
+  for (var i = 0; i < 4; i++){
+    var q = (curQ + i) % 4, y = curY + Math.floor((curQ + i) / 4);
+    quarters.push({ key: y + '-' + q, q: q, y: y, items: [] });
+  }
+  var overdue = [], qMap = {};
+  quarters.forEach(function(Q){ qMap[Q.key] = Q; });
+
+  vehicles.forEach(function(v){
+    if (v._inactive) return;
+    DOC_LABELS.forEach(function(pair){
+      var info = v[pair[0]];
+      if (!info || !info.date || info.daysLeft === null || info.daysLeft === undefined) return;
+      var d = new Date(info.date);
+      if (isNaN(d.getTime())) return;
+      var item = { v: v, label: pair[1], d: d, info: info };
+      if (info.daysLeft < 0){ overdue.push(item); return; }
+      var k = d.getFullYear() + '-' + Math.floor(d.getMonth() / 3);
+      if (qMap[k]) qMap[k].items.push(item);
+    });
+  });
+
+  var rowHtml = function(it){
+    var cls = it.info.daysLeft < 0 || it.info.daysLeft <= 7 ? 'red' : it.info.daysLeft <= 30 ? 'yellow' : '';
+    var when = it.info.daysLeft < 0 ? 'เลย ' + Math.abs(it.info.daysLeft) + ' วัน' : it.d.getDate() + ' ' + TH_M[it.d.getMonth()];
+    return '<div class="q-row" onclick="openDetail(\'' + esc(it.v.ID) + '\')" title="' + esc((it.v['ยี่ห้อ'] || '') + ' ' + (it.v['รุ่น'] || '')) + '">' +
+      '<span class="d">' + when + '</span><span class="p">' + esc(it.v['ทะเบียนรถ']) + '</span>' +
+      '<span class="t ' + cls + '">' + it.label + '</span></div>';
+  };
+  var byDate = function(a, b){ return a.d - b.d; };
+  var cardHtml = function(cls, title, sub, items){
+    items.sort(byDate);
+    return '<div class="q-card anim-in ' + cls + (items.length ? '' : ' empty') + '">' +
+      '<div class="q-head"><b>' + title + '</b><span>' + sub + '</span><span class="q-cnt">' + items.length + '</span></div>' +
+      (items.length ? items.map(rowHtml).join('') : '<div class="q-none">ไม่มีรายการ</div>') + '</div>';
+  };
+
+  var html = '<div class="q-grid">';
+  if (overdue.length) html += cardHtml('over', '⚠️ เลยกำหนด', 'ต่อด่วน', overdue);
+  quarters.forEach(function(Q, i){
+    var m1 = TH_M[Q.q * 3], m3 = TH_M[Q.q * 3 + 2];
+    html += cardHtml(i === 0 ? 'now' : '', 'Q' + (Q.q + 1) + '/' + String(Q.y + 543).slice(-2),
+      m1 + '–' + m3 + (i === 0 ? ' • ไตรมาสนี้' : ''), Q.items);
+  });
+  return html + '</div>';
+}
 
 function donutCardHtml(vehicles){
   var byType = {};
@@ -1269,7 +1462,7 @@ function donutCardHtml(vehicles){
   return '<div class="stat-card anim-in" style="animation-delay:.08s"><h4>🚘 สัดส่วนประเภทรถ</h4>' +
     '<div class="donut-flex"><svg viewBox="0 0 42 42" width="92" height="92" style="transform:rotate(0deg)">' +
     '<circle cx="21" cy="21" r="15.9155" fill="none" stroke="var(--border)" stroke-width="4.6"/>' + segs +
-    '<text x="21" y="23.5" text-anchor="middle" font-size="9" font-weight="800" fill="var(--text-1)" font-family="inherit">' + (total === 1 && !STATE.vehicles.length ? 0 : STATE.vehicles.length) + '</text>' +
+    '<text x="21" y="23.5" text-anchor="middle" font-size="9" font-weight="800" fill="var(--text-1)" font-family="inherit">' + vehicles.length + '</text>' +
     '</svg><div class="legend">' + legend + '</div></div></div>';
 }
 
@@ -1429,12 +1622,13 @@ function vehicleCardHtml(v, idx){
   var urg = v._urgency || 'none';
   var brand = v['ยี่ห้อ'] || '';
   var modelLine = [brand, v['รุ่น'], v['ปี (พ.ศ.)'] ? 'ปี ' + v['ปี (พ.ศ.)'] : '', v['สี']].filter(String).join(' • ') || 'ไม่ระบุรุ่น';
-  var pills =
-    expPillHtml('พรบ.', v._actExpiry) +
-    expPillHtml('ประกันภัย', v._insuranceExpiry) +
-    expPillHtml('ภาษี', v._plateExpiry);
+  var pills = v._inactive
+    ? '<div class="exp-pill none" style="flex:1"><div class="vl">ไม่ติดตามวันหมดอายุ (จอด/ขายแล้ว)</div></div>'
+    : expPillHtml('พรบ.', v._actExpiry) +
+      expPillHtml('ประกันภัย', v._insuranceExpiry) +
+      expPillHtml('ภาษี', v._plateExpiry);
   return '<div class="card clickable swept anim-in urg-' + urg + '" style="animation-delay:' + (Math.min(idx,10) * 45) + 'ms" onclick="openDetail(\'' + esc(v.ID) + '\')">' +
-    '<div class="v-card">' + logoChipHtml(brand, '') +
+    '<div class="v-card">' + carChipHtml(v, '') +
       '<div class="v-main">' +
         '<div class="v-top">' + plateTagHtml(v['ทะเบียนรถ'], v['จังหวัดทะเบียน']) + statusBadgeHtml(v['สถานะรถ']) + '</div>' +
         '<div class="v-model">' + esc(modelLine) + '</div>' +
@@ -1454,13 +1648,79 @@ function expPillHtml(label, info){
   return '<div class="exp-pill ' + info.urgency + '"><div class="lb">' + label + '</div><div class="vl">' + txt + '</div></div>';
 }
 
+/* ================= VEHICLE PHOTOS (v4) ================= */
+function photoSlotHtml(v, side){
+  var col = side === 'back' ? 'รูปหลังรถ' : 'รูปหน้ารถ';
+  var label = side === 'back' ? 'ด้านหลัง' : 'ด้านหน้า';
+  var src = drivePhotoSrc(v[col], 900);
+  var pick = 'pickVehiclePhoto(\'' + esc(v.ID) + '\',\'' + side + '\')';
+  if (src){
+    return '<div class="photo-slot" id="ps_' + side + '" onclick="viewPhoto(\'' + esc(drivePhotoSrc(v[col], 1800)) + '\')">' +
+      '<img src="' + esc(src) + '" alt="' + label + '" loading="lazy">' +
+      '<span class="lbl">' + label + '</span>' +
+      (canEdit() ? '<span class="chg" onclick="event.stopPropagation();' + pick + '">📷 เปลี่ยน</span>' : '') + '</div>';
+  }
+  return '<div class="photo-slot" id="ps_' + side + '"' + (canEdit() ? ' onclick="' + pick + '"' : '') + '>' +
+    '<span style="font-size:26px">📷</span>' + (canEdit() ? 'เพิ่มรูป' + label : 'ยังไม่มีรูป' + label) + '</div>';
+}
+function viewPhoto(src){
+  var pv = el('photoViewer');
+  if (!pv){
+    pv = document.createElement('div'); pv.id = 'photoViewer';
+    pv.onclick = function(){ pv.classList.remove('show'); };
+    pv.innerHTML = '<img alt="">';
+    document.body.appendChild(pv);
+  }
+  pv.querySelector('img').src = src;
+  pv.classList.add('show');
+}
+function pickVehiclePhoto(vehicleId, side){
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = function(){
+    if (inp.files && inp.files[0]) uploadVehiclePhotoFile(vehicleId, side, inp.files[0]);
+  };
+  inp.click();
+}
+/* ย่อรูปในเครื่องก่อนส่ง (ด้านยาวสุด 1280px, JPEG) — รูปจากมือถือ 4–8MB เหลือ ~200–400KB */
+function resizeImageToBase64(file, maxSide, cb){
+  var img = new Image(), url = URL.createObjectURL(file);
+  img.onload = function(){
+    var scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+    var c = document.createElement('canvas');
+    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    URL.revokeObjectURL(url);
+    cb(c.toDataURL('image/jpeg', 0.82).split(',')[1]);
+  };
+  img.onerror = function(){ URL.revokeObjectURL(url); cb(null); };
+  img.src = url;
+}
+function uploadVehiclePhotoFile(vehicleId, side, file){
+  var v = STATE.vehicles.filter(function(x){ return x.ID === vehicleId; })[0];
+  if (!v) return;
+  var slot = el('ps_' + side); if (slot) slot.classList.add('busy');
+  resizeImageToBase64(file, 1280, function(b64){
+    if (!b64){ if (slot) slot.classList.remove('busy'); toast('⚠️ อ่านไฟล์รูปไม่ได้'); return; }
+    google.script.run.withSuccessHandler(function(res){
+      if (slot) slot.classList.remove('busy');
+      if (!res.success){ toast('⚠️ ' + (res.error || 'อัปโหลดไม่สำเร็จ')); return; }
+      v[res.data.column] = res.data.url;            // อัปเดตในเครื่องทันที ไม่ต้องโหลดใหม่ทั้งหมด
+      var s2 = el('ps_' + side);
+      if (s2) s2.outerHTML = photoSlotHtml(v, side);
+      toast('บันทึกรูป' + (side === 'back' ? 'ด้านหลัง' : 'ด้านหน้า') + 'เรียบร้อย');
+    }).withFailureHandler(function(err){ if (slot) slot.classList.remove('busy'); onFatalError(err); })
+      .uploadVehiclePhoto(b64, v['ทะเบียนรถ'], side);
+  });
+}
+
 /* ================= VEHICLE DETAIL ================= */
 function openDetail(id){
   var v = STATE.vehicles.filter(function(x){ return x.ID === id; })[0];
   if (!v) return;
   var brand = v['ยี่ห้อ'] || '';
   var html =
-  '<div class="d-head">' + logoChipHtml(brand, 'lg') +
+  '<div class="d-head">' + carChipHtml(v, 'lg') +
     '<div class="info"><div class="v-top">' + plateTagHtml(v['ทะเบียนรถ'], v['จังหวัดทะเบียน']) + '</div>' +
     '<div class="v-model" style="margin-top:7px">' + esc([brand, v['รุ่น'], v['ปี (พ.ศ.)'] ? 'ปี ' + v['ปี (พ.ศ.)'] : ''].filter(String).join(' • ') || 'ไม่ระบุรุ่น') + '</div>' +
     '<div style="margin-top:6px">' + statusBadgeHtml(v['สถานะรถ']) + ' <span class="mini-chip">' + esc((TYPE_ICONS[v['ประเภทรถ']] || '') + ' ' + (v['ประเภทรถ'] || '')) + '</span></div></div>' +
@@ -1469,6 +1729,10 @@ function openDetail(id){
     '<div class="q-cell"><div class="l">เลขไมล์ล่าสุด</div><div class="v">' + (v['เลขไมล์ล่าสุด'] ? formatMoney(v['เลขไมล์ล่าสุด']) + ' กม.' : '-') + '</div></div>' +
     '<div class="q-cell"><div class="l">คนขับหลัก</div><div class="v">' + esc(v['ผู้ใช้งาน/คนขับหลัก'] || '-') + '</div></div>' +
     '<div class="q-cell"><div class="l">แผนก/สาขา</div><div class="v">' + esc(v['แผนก/สาขา'] || '-') + '</div></div>' +
+  '</div>' +
+
+  '<div class="fsec">รูปรถ</div><div class="photo-grid">' +
+    photoSlotHtml(v, 'front') + photoSlotHtml(v, 'back') +
   '</div>' +
 
   '<div class="fsec">วันครบกำหนด</div><div class="exp-big">' +
@@ -1513,7 +1777,7 @@ function openDetail(id){
   }
 
   html += '<div class="fsec">ประวัติซ่อมล่าสุด</div><div id="detailMaint"><div class="skel h60"></div></div>';
-  var btns = ['<button class="btn secondary" onclick="closeOverlay(\'detailOverlay\');openFuelFormFor(\'' + esc(v.ID) + '\')">⛽ เติมน้ำมัน</button>'];
+  var btns = FEATURE_FUEL ? ['<button class="btn secondary" onclick="closeOverlay(\'detailOverlay\');openFuelFormFor(\'' + esc(v.ID) + '\')">⛽ เติมน้ำมัน</button>'] : [];
   if (canEdit()){
     btns.unshift('<button class="btn secondary" onclick="closeOverlay(\'detailOverlay\');openVehicleForm(\'' + esc(v.ID) + '\')">✏️ แก้ไขข้อมูล</button>');
     btns.push('<button class="btn" onclick="closeOverlay(\'detailOverlay\');openMaintFormFor(\'' + esc(v.ID) + '\')">🔧 เพิ่มงานซ่อม</button>');
@@ -1859,6 +2123,7 @@ function openVehicleForm(id){
     el('vf_spec_airfilter').value = v['สเปกกรองอากาศ/แอร์'] || '';
     el('vf_spec_fuelfilter').value = v['สเปกกรองโซล่า/เชื้อเพลิง'] || '';
     el('vf_fueltype').value = v['ชนิดเชื้อเพลิง'] || '';
+    el('vf_shape').value = v['รูปทรงรถ'] || '';
     setDateSelectValue('vf_act', v['วันที่ พรบ. หมดอายุ']);
     setDateSelectValue('vf_ins', v['วันประกันหมดอายุ']);
     setDateSelectValue('vf_pd', v['วันภาษี/ทะเบียนหมดอายุ']);
@@ -1892,7 +2157,8 @@ function submitVehicleForm(e){
     'สเปกน้ำมันเครื่อง': el('vf_spec_oil').value, 'สเปกกรองน้ำมันเครื่อง': el('vf_spec_oilfilter').value,
     'สเปกน้ำมันเกียร์': el('vf_spec_gearoil').value, 'สเปกยาง': el('vf_spec_tire').value,
     'สเปกแบตเตอรี่': el('vf_spec_battery').value, 'สเปกกรองอากาศ/แอร์': el('vf_spec_airfilter').value,
-    'สเปกกรองโซล่า/เชื้อเพลิง': el('vf_spec_fuelfilter').value, 'ชนิดเชื้อเพลิง': el('vf_fueltype').value
+    'สเปกกรองโซล่า/เชื้อเพลิง': el('vf_spec_fuelfilter').value, 'ชนิดเชื้อเพลิง': el('vf_fueltype').value,
+    'รูปทรงรถ': el('vf_shape').value
   };
   if (isOwner() || !id){ // เพิ่มรถใหม่ = เจ้าของเท่านั้นอยู่แล้ว / แก้ไข = ส่งฟิลด์สำคัญเฉพาะเจ้าของ
     data['ประเภทรถ'] = el('vf_type').value;
