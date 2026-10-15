@@ -726,8 +726,9 @@
   <div class="sheet">
     <div class="grab"></div>
     <button class="close-x" onclick="closeOverlay('maintOverlay')">✕</button>
-    <h2>บันทึกการซ่อมบำรุง</h2>
+    <h2 id="maintFormTitle">บันทึกการซ่อมบำรุง</h2>
     <form id="maintForm" onsubmit="submitMaintForm(event)">
+      <input type="hidden" id="mf_id">
       <div class="fsec">รายการงาน</div>
       <div class="field"><label>ทะเบียนรถ *</label><div class="vp" id="mf_plate_vp"></div></div>
       <div class="field"><label>วันที่บันทึก</label><div id="mf_date" class="date3"></div></div>
@@ -750,6 +751,7 @@
       <div class="field"><label>แนบใบเสร็จ</label><input type="file" id="mf_file" accept="image/*,.pdf"></div>
       <div class="field"><label>หมายเหตุ</label><textarea id="mf_note" rows="2"></textarea></div>
       <button class="btn" id="mfSubmitBtn" type="submit">🔧 บันทึกงานซ่อม</button>
+      <button class="btn danger" id="mfDeleteBtn" type="button" style="margin-top:10px;display:none" onclick="deleteMaintClick()">🗑️ ลบรายการนี้</button>
     </form>
   </div>
 </div>
@@ -921,7 +923,8 @@ function apiCall(body){
 var google = { script: {} };
 (function(){
   var METHODS = ['getUserInfo','getAllVehicles','addVehicle','updateVehicle','deleteVehicle',
-    'getMaintenanceLogs','addMaintenanceLog','getDashboardData','uploadAttachment','logout',
+    'getMaintenanceLogs','addMaintenanceLog','updateMaintenanceLog','deleteMaintenanceLog',
+    'getDashboardData','uploadAttachment','logout',
     'getSchedules','saveSchedule','deleteSchedule','getFuelLogs','addFuelLog'];
   function Runner(){ this._ok = function(){}; this._err = function(){}; }
   Runner.prototype.withSuccessHandler = function(f){ this._ok = f; return this; };
@@ -1725,9 +1728,13 @@ function tlItemHtml(m, idx, showPlate){
     }
   }
   var cost = Number(m['ค่าใช้จ่าย (บาท)']) || 0;
+  if (m.ID) MAINT_CACHE[m.ID] = m;
+  var editBtn = canEditMaint(m)
+    ? ' <button type="button" class="mini-chip" style="cursor:pointer;border:none;padding:2px 7px" title="แก้ไข" onclick="event.stopPropagation();openMaintEdit(\'' + esc(m.ID) + '\')">✏️</button>'
+    : '';
   return '<div class="tl-item" style="animation-delay:' + (Math.min(idx,12) * 40) + 'ms"><div class="tl-dot">' + icon + '</div><div class="tl-card">' +
     '<div class="tl-head"><span class="tl-type">' + (showPlate ? esc(m['ทะเบียนรถ']) + ' · ' : '') + esc(m['ประเภทงาน'] || '-') + '</span>' +
-    '<span class="tl-date">' + formatDateThai(m['วันที่บันทึก']) + '</span></div>' +
+    '<span class="tl-date">' + formatDateThai(m['วันที่บันทึก']) + editBtn + '</span></div>' +
     (m['รายละเอียด'] ? '<div class="tl-detail">' + esc(m['รายละเอียด']) + '</div>' : '') +
     '<div class="tl-foot"><span class="tl-vendor">🏪 ' + esc(m['ร้าน/อู่/ศูนย์บริการ'] || '-') +
     (m['เลขไมล์ ณ วันที่ทำ'] ? ' · 🛣️ ' + formatMoney(m['เลขไมล์ ณ วันที่ทำ']) + ' กม.' : '') + '</span>' +
@@ -1924,6 +1931,15 @@ function uploadFile(file, plate, cb){
 }
 
 /* ================= MAINT FORM ================= */
+var MAINT_CACHE = {}; // ID → รายการซ่อม (เติมตอน render timeline) ใช้เปิดฟอร์มแก้ไข
+
+/* เจ้าของแก้ได้ทุกรายการ / แอดมิน, DSR แก้ได้เฉพาะที่ตัวเองบันทึก (backend เช็คซ้ำอีกชั้น) */
+function canEditMaint(m){
+  if (!m || !m.ID) return false;
+  if (isOwner()) return true;
+  return canEdit() && String(m['ผู้บันทึก'] || '').trim() === STATE.userEmail;
+}
+
 function openMaintForm(){
   if (!STATE.vehicles.length){ initMaintTab(); }
   if (!VP_STATE['mf_plate'] && STATE.vehicles.length) populateMaintVehicleSelects();
@@ -1931,6 +1947,10 @@ function openMaintForm(){
   setDateSelectValue('mfd', new Date());
   el('mf_nextdate').innerHTML = dateSelectHtml('mfn');
   el('maintForm').reset();
+  el('mf_id').value = '';
+  el('maintFormTitle').innerText = 'บันทึกการซ่อมบำรุง';
+  el('mfSubmitBtn').innerText = '🔧 บันทึกงานซ่อม';
+  el('mfDeleteBtn').style.display = 'none';
   setDateSelectValue('mfd', new Date());
   var pre = (VP_STATE['maintVehicleFilter'] && el('maintVehicleFilter')) ? el('maintVehicleFilter').value : '';
   vpSet('mf_plate', pre);
@@ -1941,9 +1961,48 @@ function openMaintFormFor(vehicleId){
   openMaintForm();
   if (v) vpSet('mf_plate', v['ทะเบียนรถ']);
 }
+function openMaintEdit(id){
+  var m = MAINT_CACHE[id];
+  if (!m) return;
+  closeOverlay('detailOverlay');
+  openMaintForm();
+  el('mf_id').value = id;
+  el('maintFormTitle').innerText = '✏️ แก้ไขรายการซ่อม';
+  el('mfSubmitBtn').innerText = '💾 บันทึกการแก้ไข';
+  el('mfDeleteBtn').style.display = isOwner() ? '' : 'none';
+  vpSet('mf_plate', m['ทะเบียนรถ']);
+  setDateSelectValue('mfd', m['วันที่บันทึก']);
+  var t = m['ประเภทงาน'] || 'อื่นๆ', sel = el('mf_type');
+  if (!Array.prototype.some.call(sel.options, function(o){ return o.value === t; })){
+    var opt = document.createElement('option'); opt.text = t; sel.add(opt); // ประเภทเก่าที่ไม่อยู่ในลิสต์
+  }
+  sel.value = t;
+  el('mf_detail').value = m['รายละเอียด'] || '';
+  el('mf_mileage').value = m['เลขไมล์ ณ วันที่ทำ'] || '';
+  el('mf_cost').value = m['ค่าใช้จ่าย (บาท)'] || '';
+  el('mf_vendor').value = m['ร้าน/อู่/ศูนย์บริการ'] || '';
+  setDateSelectValue('mfn', m['รอบถัดไป (วันที่)']);
+  el('mf_nextmile').value = m['รอบถัดไป (ไมล์)'] || '';
+  el('mf_note').value = m['หมายเหตุ'] || '';
+}
+function deleteMaintClick(){
+  var id = el('mf_id').value;
+  if (!id || !confirm('ยืนยันลบรายการซ่อมนี้?\n(ลบแล้วกู้คืนจากหน้าเว็บไม่ได้)')) return;
+  var btn = el('mfDeleteBtn'); btn.classList.add('loading');
+  google.script.run.withSuccessHandler(function(res){
+    btn.classList.remove('loading');
+    if (!res.success){ toast('⚠️ ' + (res.error || 'ลบไม่สำเร็จ')); return; }
+    closeOverlay('maintOverlay');
+    toast('ลบรายการเรียบร้อย');
+    delete MAINT_CACHE[id];
+    STATE.maintAll = null;
+    if (el('tab-maintenance').classList.contains('active')) loadMaintenance();
+  }).withFailureHandler(function(err){ btn.classList.remove('loading'); onFatalError(err); }).deleteMaintenanceLog(id);
+}
 function submitMaintForm(e){
   e.preventDefault();
   if (!el('mf_plate') || !el('mf_plate').value){ toast('⚠️ กรุณาเลือกทะเบียนรถก่อนบันทึก'); return; }
+  var editId = el('mf_id').value;
   var btn = el('mfSubmitBtn'); btn.classList.add('loading');
   var data = {
     'ทะเบียนรถ': el('mf_plate').value,
@@ -1960,15 +2019,19 @@ function submitMaintForm(e){
   var done = function(){
     btn.classList.remove('loading');
     closeOverlay('maintOverlay');
-    toast('บันทึกงานซ่อมเรียบร้อย');
+    toast(editId ? 'แก้ไขรายการเรียบร้อย' : 'บันทึกงานซ่อมเรียบร้อย');
     STATE.maintAll = null;
     if (el('tab-maintenance').classList.contains('active')) loadMaintenance();
   };
-  google.script.run.withSuccessHandler(function(){
+  var onSaved = function(res){
+    if (res && res.success === false){ btn.classList.remove('loading'); toast('⚠️ ' + (res.error || 'บันทึกไม่สำเร็จ')); return; }
     var fi = el('mf_file');
     if (fi.files && fi.files[0]) uploadFile(fi.files[0], data['ทะเบียนรถ'], done);
     else done();
-  }).withFailureHandler(function(err){ btn.classList.remove('loading'); onFatalError(err); }).addMaintenanceLog(data);
+  };
+  var fail = function(err){ btn.classList.remove('loading'); onFatalError(err); };
+  if (editId) google.script.run.withSuccessHandler(onSaved).withFailureHandler(fail).updateMaintenanceLog(editId, data);
+  else google.script.run.withSuccessHandler(onSaved).withFailureHandler(fail).addMaintenanceLog(data);
 }
 
 /* ================= SCHEDULES (รอบเปลี่ยนถ่าย) ================= */
