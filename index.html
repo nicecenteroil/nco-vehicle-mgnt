@@ -112,14 +112,16 @@
     .sec-head{display:flex;align-items:center;justify-content:space-between;margin:20px 0 4px;}
     .sec-title{font-size:14.5px;font-weight:800;color:var(--text-1);display:flex;align-items:center;gap:8px;}
     .sec-title .ico{font-size:15px;}
-    /* Road divider — signature */
-    .road{height:3px;border-radius:2px;margin:6px 0 14px;position:relative;overflow:hidden;background:var(--border);}
-    .road::after{
-      content:'';position:absolute;inset:0;
-      background:repeating-linear-gradient(90deg,var(--accent) 0 18px,transparent 18px 34px);
-      animation:roadMove 1.6s linear infinite;opacity:.85;
-    }
-    @keyframes roadMove{to{transform:translateX(34px);}}
+    /* Section divider (v4.3) — เส้นไล่สีแบบเส้นทางสนามแข่ง + แสงวิ่งผ่านเป็นระยะ (แทนเส้นประวิ่งเดิม) */
+    .road{height:8px;margin:4px 0 11px;position:relative;overflow:hidden;
+      background:linear-gradient(90deg,var(--accent) 0,var(--accent-2) 18%,var(--accent-soft) 45%,transparent 100%) 0 50%/100% 2px no-repeat;}
+    .road::before{content:'';position:absolute;left:1px;top:1px;width:6px;height:6px;border-radius:50%;
+      background:var(--accent);box-shadow:0 0 8px 1px var(--accent-glow);}
+    .road::after{content:'';position:absolute;top:3px;height:2px;left:-30%;width:30%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);
+      animation:roadSweep 5s cubic-bezier(.45,0,.2,1) infinite;}
+    @keyframes roadSweep{0%{left:-30%;}55%,100%{left:110%;}}
+    @media (prefers-reduced-motion:reduce){.road::after{animation:none;display:none;}}
 
     /* ============ CARDS ============ */
     .card{
@@ -330,12 +332,12 @@
     .car-chip{width:64px;height:52px;border-radius:15px;flex-shrink:0;position:relative;overflow:hidden;
       background:radial-gradient(120% 90% at 50% 100%, var(--card-2), var(--bg-2));
       border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;}
-    .car-chip svg{width:58px;height:auto;display:block;}
+    .car-chip > img{width:64px;height:auto;display:block;user-select:none;pointer-events:none;}
     .car-chip.lg{width:96px;height:72px;border-radius:18px;}
-    .car-chip.lg svg{width:88px;}
-    .car-chip .brand-badge{position:absolute;right:3px;bottom:3px;width:17px;height:17px;border-radius:6px;
+    .car-chip.lg > img{width:96px;}
+    .car-chip .brand-badge{position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:6px;
       background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.35);}
-    .car-chip.lg .brand-badge{width:22px;height:22px;right:5px;bottom:5px;}
+    .car-chip.lg .brand-badge{width:22px;height:22px;left:5px;top:5px;}
     .car-chip .brand-badge img{width:72%;height:72%;object-fit:contain;}
     .car-chip .brand-badge i{font-style:normal;font-size:9px;font-weight:900;color:#3a434f;}
     .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -710,7 +712,7 @@
       <div class="field"><label>รูปทรงรถ (ใช้วาดไอคอน)</label>
         <select id="vf_shape">
           <option value="">อัตโนมัติ (เดาจากรุ่น)</option>
-          <option>เก๋ง</option><option>กระบะ</option><option>SUV</option><option>MPV/รถครอบครัว</option><option>รถตู้</option><option>รถบรรทุก</option>
+          <option>เก๋ง</option><option>เก๋ง 5 ประตู (แฮทช์แบ็ก)</option><option>กระบะ</option><option>SUV</option><option>MPV/รถครอบครัว</option><option>รถตู้</option><option>รถบรรทุก</option>
         </select>
       </div>
       <div class="f2">
@@ -1144,7 +1146,7 @@ function logoChipHtml(brandName, sizeClass){
 /* ================= CAR ICON (v4) =================
    วาดรถด้านข้างแบบกราฟิก ตาม "รูปทรงรถ" + "สี" ของแต่ละคัน
    ถ้ายังไม่ได้ตั้งรูปทรง จะเดาจากรุ่น (Hilux → กระบะ, NLR85 → รถบรรทุก ฯลฯ) */
-var CAR_SHAPES = { 'เก๋ง':'sedan', 'กระบะ':'pickup', 'SUV':'suv', 'MPV/รถครอบครัว':'mpv', 'รถตู้':'van', 'รถบรรทุก':'truck' };
+var CAR_SHAPES = { 'เก๋ง':'sedan', 'เก๋ง 5 ประตู (แฮทช์แบ็ก)':'hatch', 'กระบะ':'pickup', 'SUV':'suv', 'MPV/รถครอบครัว':'mpv', 'รถตู้':'van', 'รถบรรทุก':'truck' };
 var CAR_COLORS = [
   [/ขาว|white/i,'#eef1f4'], [/ดำ|black/i,'#262a31'], [/เทา|gray|grey/i,'#7d8794'],
   [/เงิน|บรอนซ์|silver/i,'#c2c9d1'], [/แดง|red/i,'#cf3b3b'], [/น้ำเงิน|กรม|blue/i,'#2f5fb3'],
@@ -1159,6 +1161,7 @@ function guessCarShape(v){
   if (/Hilux|Vigo|Revo|D-?max|Triton|Ranger|Navara|BT-?50|กระบะ/i.test(t)) return 'pickup';
   if (/รถตู้|Commuter|Hiace|Ventury|Van\b/i.test(t)) return 'van';
   if (/Avanza|Innova|Sienta|Freed|Ertiga|Xpander|Veloz|Odyssey|Alphard/i.test(t)) return 'mpv';
+  if (/Mazda\s*2\b|^Mazda 2|\b2 Elegance|Yaris(?! Ativ)|Jazz|March|Swift|Brio|Fiesta|Mazda\s*3/i.test(t)) return 'hatch';
   if (/\bX[1-7]\b|CR-?V|HR-?V|Fortuner|Pajero|MU-?X|CX-?\d|Everest|SUV|Corolla Cross|Yaris Cross/i.test(t)) return 'suv';
   if (v['ประเภทรถ'] === 'รถขนส่ง') return 'truck';
   return 'sedan';
@@ -1173,56 +1176,378 @@ function shadeHex(hex, amt){ /* amt -1..1 : ติดลบ = เข้มขึ
   var f = function(c){ return Math.round(amt < 0 ? c * (1 + amt) : c + (255 - c) * amt); };
   return '#' + ((1 << 24) | (f(r) << 16) | (f(g) << 8) | f(b)).toString(16).slice(1);
 }
-function carSvg(shape, color){
-  var dark = shadeHex(color, -0.28), light = shadeHex(color, 0.35);
-  var glass = '#1b2532', glassHi = 'rgba(255,255,255,.22)', edge = 'rgba(255,255,255,.28)';
-  var P = { /* body, windows, pillars(x), wheels(x), headlight y, extras */
-    sedan:  { body:'M8,44 L8,36 Q9,31 16,30 L30,29 L42,19 Q46,16 52,16 L72,16 Q79,16 84,20 L95,28 L108,30 Q114,31 114,37 L114,44 Z',
-              win:'M45,28 L52,19.5 L71,19.5 Q76,19.5 79,22 L86,28 Z', pil:[64], wh:[30,92], hl:32 },
-    pickup: { body:'M6,44 L6,30 L54,30 L60,18 Q62,15.5 66,15.5 L80,15.5 Q84,15.5 87,19 L95,28 L108,30 Q114,31 114,37 L114,44 Z',
-              win:'M62,28 L66.5,19 L79,19 Q82,19 84,21.5 L89.5,28 Z', pil:[75], wh:[28,94], hl:32,
-              extra:'<rect x="6" y="30" width="48" height="3" fill="' + dark + '"/>' },
-    suv:    { body:'M8,44 L8,24 Q9,17.5 16,17 L73,15 Q80,15 85,19 L95,27 L108,29 Q114,30 114,37 L114,44 Z',
-              win:'M15,27 L17,20.5 L72,18.5 Q77,18.5 81,21.5 L87,27 Z', pil:[37,61], wh:[28,94], hl:31,
-              extra:'<rect x="22" y="13.4" width="44" height="1.8" rx=".9" fill="' + dark + '"/>' },
-    mpv:    { body:'M8,44 L8,27 Q9,20 16,19 L71,17 Q78,17 84,21 L97,29 L108,30 Q114,31 114,37 L114,44 Z',
-              win:'M16,28 L18,22 L70,20.3 Q75,20.3 79,23 L87,28 Z', pil:[39,61], wh:[28,94], hl:32 },
-    van:    { body:'M6,44 L6,16 Q6,12 11,12 L91,12 Q97,12 101,17.5 L108,28 Q114,30 114,36 L114,44 Z',
-              win:'M11,16 L91,16 L91,26 L11,26 Z', pil:[31,51,71], wh:[26,96], hl:31,
-              extra:'<path d="M94,16 L99,16 L105.5,27 L94,27 Z" fill="' + glass + '"/><path d="M95,17 L98,17 L101,22 L95,22 Z" fill="' + glassHi + '"/>' },
-    truck:  { body:'M74,44 L74,14 Q74,11 78,11 L97,11 Q101,11 103,14.5 L112,30 Q114,32 114,36 L114,44 Z',
-              win:'M80,15 L97,15 Q99.5,15 100.5,17 L107,28 L80,28 Z', pil:[], wh:[24,98], hl:32,
-              pre:'<rect x="4" y="7" width="68" height="34" rx="2.5" fill="#d6dce3" stroke="rgba(0,0,0,.18)" stroke-width=".8"/>' +
-                  '<rect x="4" y="7" width="68" height="4" rx="2" fill="#eef1f4"/>' +
-                  '<path d="M21,11 V41 M38,11 V41 M55,11 V41" stroke="rgba(0,0,0,.08)" stroke-width="1"/>' +
-                  '<rect x="4" y="40" width="108" height="4" fill="#2a3038"/>' }
-  }[shape] || null;
-  if (!P) return carSvg('sedan', color);
-  var s = '<svg viewBox="0 0 120 58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-    '<ellipse cx="60" cy="53" rx="55" ry="3.2" fill="rgba(0,0,0,.35)"/>' + (P.pre || '') +
-    '<path d="' + P.body + '" fill="' + color + '" stroke="' + edge + '" stroke-width=".8"/>' +
-    (P.extra || '') +
-    '<path d="' + P.win + '" fill="' + glass + '"/>';
-  /* เสาหน้าต่าง: ตัดให้อยู่ในกรอบหน้าต่างพอดี (ไม่ทะลุหลังคา) */
-  var wy = { sedan:[19.5,28], pickup:[19,28], suv:[18.5,27], mpv:[20.3,28], van:[16,26] }[shape] || [18,28];
-  P.pil.forEach(function(x){ s += '<rect x="' + (x - 1.1) + '" y="' + wy[0] + '" width="2.2" height="' + (wy[1] - wy[0]) + '" fill="' + color + '"/>'; });
-  s += '<rect x="' + (shape === 'truck' ? 76 : 12) + '" y="39.5" width="' + (shape === 'truck' ? 34 : 98) + '" height="2" fill="' + dark + '" opacity=".7"/>' +
-    '<rect x="108.5" y="' + P.hl + '" width="5" height="3" rx="1.2" fill="#fff4cc"/>' +
-    (shape === 'truck' ? '' : '<rect x="' + (shape === 'pickup' || shape === 'van' ? 6 : 8) + '" y="' + (P.hl - 0.5) + '" width="3" height="4" rx="1" fill="#ff5252"/>');
-  P.wh.forEach(function(x){
-    s += '<circle cx="' + x + '" cy="45" r="10" fill="#0d1218"/><circle cx="' + x + '" cy="45" r="8" fill="#232a33"/>' +
-         '<circle cx="' + x + '" cy="45" r="4.2" fill="#aeb7c2"/><circle cx="' + x + '" cy="45" r="1.6" fill="#59626d"/>';
-  });
-  return s + '</svg>';
+/* ================= SMOOTH 3D CAR ICONS (v4.4) =================
+   รถแต่ละคันเป็นโมเดล 3D ผิวโค้ง (หน้าตัดทรง squircle ไล่ตามความยาวรถ) แรเงา + ไฮไลต์เงาวาว
+   มุมกล้องเฉียงหน้าแบบหน้าเลือกรถในเกมแข่งรถ — สัดส่วนป้อมน่ารักแต่ทรงตามรถจริง
+   พิกัด: x = ความยาว (หน้ารถ = +x), y = ความกว้าง (ฝั่งที่เห็น = -y), z = ความสูง */
+var S3_YAW = -34 * Math.PI / 180, S3_PITCH = 23 * Math.PI / 180;
+var S3_L = (function(){ var l = [0.45, -0.6, 0.72], m = Math.hypot(l[0], l[1], l[2]); return [l[0]/m, l[1]/m, l[2]/m]; })();
+var S3_V = [-Math.cos(S3_PITCH) * Math.sin(S3_YAW), -Math.cos(S3_PITCH) * Math.cos(S3_YAW), Math.sin(S3_PITCH)];
+var S3_H = (function(){ var h = [S3_L[0] + S3_V[0], S3_L[1] + S3_V[1], S3_L[2] + S3_V[2]], m = Math.hypot(h[0], h[1], h[2]); return [h[0]/m, h[1]/m, h[2]/m]; })();
+var S3_GLASS = '#1b2531';
+
+/* รถที่วาดจากรูปจริง — จับคู่ด้วยตัวเลขทะเบียน */
+var CAR_ART = {
+  '7711': { model: 'truck', color: '#f3f5f7', livery: 'white',  box: '#f2f4f6', bumper: '#e8ecf0' },  // ปา 7711 Isuzu NLR หน้าขาวล้วน
+  '7218': { model: 'truck', color: '#f3f5f7', livery: 'band',   box: '#c3c9d0', bumper: '#25292f', alu: true }, // ผก 7218 ELF ตู้อะลูมิเนียม
+  '4869': { model: 'truck', color: '#f3f5f7', livery: 'stripe', box: '#f2f4f6', bumper: '#25292f' },  // ผค 4869 ELF NLR130 แถบเหลือง
+  '3595': { model: 'pickupBox', color: '#f1f3f5', box: '#f1efe8' },                                   // ผก 3595 Hilux ตู้ทึบไฟเบอร์
+  '5890': { model: 'pickup', color: '#22262c' },                                                      // กน 5890 D-max ดำ
+  '7187': { model: 'mpv', color: '#b9c0c8' },                                                         // กบ 7187 Avanza เงิน
+  '2869': { model: 'sedan', color: '#b8bfc6' },                                                       // กย 2869 Accord G7 เงิน
+  '5550': { model: 'sedan', color: '#7f868f' },                                                       // กธ 5550 Accord G7 เทา
+  '6313': { model: 'sedanOld', color: '#c8b78f' },                                                    // กท 6313 Accord ทอง
+  '2079': { model: 'hatch', color: '#f2f4f6' },                                                       // กร 2079 Mazda 2 ขาว
+  '3608': { model: 'sedanSmall', color: '#f2f4f6' }                                                   // กบ 3608 Almera ขาว
+};
+
+/* ---------- คณิตพื้นฐาน ---------- */
+function s3Proj(p){
+  var c = Math.cos(S3_YAW), s = Math.sin(S3_YAW);
+  var x1 = p[0] * c - p[1] * s, y1 = p[0] * s + p[1] * c;
+  return { x: x1, y: -(p[2] * Math.cos(S3_PITCH) + y1 * Math.sin(S3_PITCH)), d: y1 * Math.cos(S3_PITCH) - p[2] * Math.sin(S3_PITCH) };
 }
+function s3Vis(n){ return n[0] * S3_V[0] + n[1] * S3_V[1] + n[2] * S3_V[2] > 1e-4; }
+function s3Shade(hex, n){
+  var dif = Math.max(0, n[0] * S3_L[0] + n[1] * S3_L[1] + n[2] * S3_L[2]);
+  var spec = Math.pow(Math.max(0, n[0] * S3_H[0] + n[1] * S3_H[1] + n[2] * S3_H[2]), 28);
+  if (hex === S3_GLASS) return shadeHex(hex, (dif - 0.5) * 0.35 + spec * 0.55);
+  var nn = parseInt(hex.slice(1), 16), lum = (0.299 * (nn >> 16) + 0.587 * ((nn >> 8) & 255) + 0.114 * (nn & 255)) / 255;
+  var amt = (dif - 0.58) * 0.85 + spec * (lum < 0.25 ? 0.8 : 0.55);
+  /* รถสีเข้ม (ดำ) ไม่ให้มืดจนจม — ให้เห็นทรงจากไฮไลต์ */
+  return shadeHex(hex, Math.max(lum < 0.25 ? -0.2 : -0.6, Math.min(0.6, amt)));
+}
+/* เส้นโค้งเรียบผ่านจุดควบคุม (Catmull-Rom) → ฟังก์ชัน f(x) */
+function s3Curve(pts){
+  pts = pts.slice().sort(function(a, b){ return a[0] - b[0]; });
+  return function(x){
+    if (x <= pts[0][0]) return pts[0][1];
+    if (x >= pts[pts.length - 1][0]) return pts[pts.length - 1][1];
+    var i = 0; while (x > pts[i + 1][0]) i++;
+    var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    var t = (x - p1[0]) / (p2[0] - p1[0]);
+    var m1 = (p2[1] - p0[1]) / ((p2[0] - p0[0]) || 1) * (p2[0] - p1[0]);
+    var m2 = (p3[1] - p1[1]) / ((p3[0] - p1[0]) || 1) * (p2[0] - p1[0]);
+    var t2 = t * t, t3 = t2 * t;
+    return (2*t3 - 3*t2 + 1) * p1[1] + (t3 - 2*t2 + t) * m1 + (-2*t3 + 3*t2) * p2[1] + (t3 - t2) * m2;
+  };
+}
+var s3Fn = function(v){ return typeof v === 'function' ? v : (Array.isArray(v) ? s3Curve(v) : function(){ return v; }); };
+
+/* ---------- ชิ้นส่วนผิวโค้ง (loft) ----------
+   part = { x0, x1, N, zb, zt, hw, top (อัตราแคบด้านบน), n (ความเหลี่ยม: 2 กลม … 8 เหลี่ยมมน), color(f) } */
+var S3_M = 16;
+function s3Section(part, x){
+  var zb = part.zb(x), zt = part.zt(x), hw = part.hw(x), zc = (zb + zt) / 2, hz = Math.max(0.005, (zt - zb) / 2);
+  var pts = [];
+  for (var j = 0; j < S3_M; j++){
+    var t = j / S3_M * Math.PI * 2 - Math.PI / 2;               // เริ่มจากด้านล่างตรงกลาง
+    var c = Math.cos(t), s = Math.sin(t), n = s < 0 ? part.nb : part.n;
+    var zr = Math.sign(s) * Math.pow(Math.abs(s), 2 / n);
+    var yr = Math.sign(c) * Math.pow(Math.abs(c), 2 / n);
+    var taper = 1 - (1 - part.top) * Math.max(0, zr);           // ด้านบนแคบลง (tumblehome)
+    pts.push([x, -yr * hw * taper, zc + zr * hz]);              // -y = ฝั่งที่เห็น
+  }
+  return { pts: pts, zc: zc };
+}
+/* ระยะ y ของผิวด้านข้าง ณ (x,z) — ใช้วางลวดลาย/ไฟ/หน้าต่างบนตัวรถ */
+function s3SideY(part, x, z){
+  var zb = part.zb(x), zt = part.zt(x), hw = part.hw(x), zc = (zb + zt) / 2, hz = (zt - zb) / 2;
+  var zr = Math.max(-1, Math.min(1, (z - zc) / hz)), n = zr < 0 ? part.nb : part.n;
+  var taper = 1 - (1 - part.top) * Math.max(0, zr);
+  return -(hw * taper * Math.pow(Math.max(0, 1 - Math.pow(Math.abs(zr), n)), 1 / n)) - 0.012;
+}
+function s3Part(o){
+  return { x0: o.x0, x1: o.x1, N: o.N || 16, zb: s3Fn(o.zb), zt: s3Fn(o.zt), hw: s3Fn(o.hw),
+           top: o.top == null ? 1 : o.top, n: o.n || 4, nb: o.nb || Math.max(o.n || 4, 6), color: o.color };
+}
+function s3Faces(part){
+  var secs = [], faces = [];
+  for (var i = 0; i <= part.N; i++){
+    var x = part.x0 + (part.x1 - part.x0) * i / part.N;
+    secs.push(s3Section(part, x));
+  }
+  var grid = [];
+  for (var i2 = 0; i2 < part.N; i2++){
+    grid.push([]);
+    for (var j = 0; j < S3_M; j++){
+      var a = secs[i2].pts[j], b = secs[i2].pts[(j + 1) % S3_M], c = secs[i2 + 1].pts[(j + 1) % S3_M], d = secs[i2 + 1].pts[j];
+      var u = [c[0] - a[0], c[1] - a[1], c[2] - a[2]], v = [d[0] - b[0], d[1] - b[1], d[2] - b[2]];
+      var nn = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+      var m = Math.hypot(nn[0], nn[1], nn[2]);
+      if (m < 1e-9){ grid[i2].push(null); continue; }
+      nn = [nn[0] / m, nn[1] / m, nn[2] / m];
+      var cx = (a[0] + c[0]) / 2, cy = (a[1] + c[1] + b[1] + d[1]) / 4, cz = (a[2] + b[2] + c[2] + d[2]) / 4;
+      var zc = (secs[i2].zc + secs[i2 + 1].zc) / 2;
+      if (nn[1] * cy + nn[2] * (cz - zc) < 0) nn = [-nn[0], -nn[1], -nn[2]];   // ให้ normal ชี้ออกนอกเสมอ
+      grid[i2].push({ pts: [a, b, c, d], n: nn, c: [cx, cy, cz], color: part.color(nn, [cx, cy, cz]) });
+    }
+  }
+  /* ปรับ normal ให้นุ่ม 2 รอบ (เฉลี่ยกับหน้าข้างเคียงสีเดียวกัน) → แรเงาไล่เนียน ไม่เป็นตาราง */
+  grid.forEach(function(row){ row.forEach(function(f){ if (f) f.ns = f.n; }); });
+  for (var pass = 0; pass < 2; pass++){
+    var next = grid.map(function(row, a1){ return row.map(function(f, b1){
+      if (!f) return null;
+      var s = [0, 0, 0];
+      for (var di = -2; di <= 2; di++) for (var dj = -1; dj <= 1; dj++){
+        var g = grid[a1 + di] && grid[a1 + di][(b1 + dj + S3_M) % S3_M];
+        if (g && g.color === f.color){ var wgt = (di === 0 && dj === 0) ? 3 : (dj === 0 ? 2 : 1); s[0] += g.ns[0] * wgt; s[1] += g.ns[1] * wgt; s[2] += g.ns[2] * wgt; }
+      }
+      var sm = Math.hypot(s[0], s[1], s[2]) || 1;
+      return [s[0] / sm, s[1] / sm, s[2] / sm];
+    }); });
+    grid.forEach(function(row, a1){ row.forEach(function(f, b1){ if (f) f.ns = next[a1][b1]; }); });
+  }
+  grid.forEach(function(row){ row.forEach(function(f){ if (f) faces.push(f); }); });
+  /* ฝาปิดหน้า/หลัง */
+  faces.push({ pts: secs[part.N].pts.slice(), n: [1, 0, 0], c: [part.x1, 0, secs[part.N].zc], color: part.color([1, 0, 0], [part.x1, 0, secs[part.N].zc]) });
+  faces.push({ pts: secs[0].pts.slice().reverse(), n: [-1, 0, 0], c: [part.x0, 0, secs[0].zc], color: part.color([-1, 0, 0], [part.x0, 0, secs[0].zc]) });
+  return faces;
+}
+function s3BoxFaces(x0, x1, y0, y1, z0, z1, color){
+  var P = function(x, y, z){ return [x, y, z]; }, f = [];
+  var add = function(pts, n){ f.push({ pts: pts, n: n, color: color }); };
+  add([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)], [0,0,1]);
+  add([P(x0,y0,z0),P(x1,y0,z0),P(x1,y0,z1),P(x0,y0,z1)], [0,-1,0]);
+  add([P(x1,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x1,y0,z1)], [1,0,0]);
+  add([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)], [0,1,0]);
+  add([P(x0,y0,z0),P(x0,y1,z0),P(x0,y1,z1),P(x0,y0,z1)], [-1,0,0]);
+  return f;
+}
+function s3Circle(cx, cz, r, y, k){
+  var pts = []; for (var i = 0; i < (k || 20); i++){ var a = i / (k || 20) * Math.PI * 2; pts.push([cx + Math.cos(a) * r, y, cz + Math.sin(a) * r]); }
+  return pts;
+}
+function s3Hull(P){
+  P = P.slice().sort(function(a, b){ return a.x - b.x || a.y - b.y; });
+  var cr = function(o, a, b){ return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x); }, lo = [], up = [];
+  P.forEach(function(p){ while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); });
+  P.slice().reverse().forEach(function(p){ while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); });
+  return lo.slice(0, -1).concat(up.slice(0, -1));
+}
+/* ล้อ: ยางทรงกระบอก + กระทะล้อ 5 ก้าน */
+function s3Wheel(cx, r, yEdge, side, dual, rimCol){
+  var t = 0.24 * (dual ? 1.7 : 1), yo = yEdge, yi = yEdge - side * t, out = [];
+  out.push({ hull: s3Circle(cx, r, r, yo).concat(s3Circle(cx, r, r * 0.97, yi)), color: '#14181c' });
+  if (side < 0){
+    out.push({ poly: s3Circle(cx, r, r, yo - 0.002), color: '#262c33' });
+    out.push({ poly: s3Circle(cx, r, r * 0.64, yo - 0.006), color: rimCol || '#c6cdd5' });
+    for (var k = 0; k < 5; k++){
+      var a = k / 5 * Math.PI * 2 + 0.3, b = a + 0.42, rr = r * 0.6, ri = r * 0.2;
+      out.push({ poly: [[cx + Math.cos(a) * ri, yo - 0.008, r + Math.sin(a) * ri], [cx + Math.cos(a) * rr, yo - 0.008, r + Math.sin(a) * rr],
+                        [cx + Math.cos(b) * rr, yo - 0.008, r + Math.sin(b) * rr], [cx + Math.cos(b) * ri, yo - 0.008, r + Math.sin(b) * ri]], color: '#6d7782' });
+    }
+    out.push({ poly: s3Circle(cx, r, r * 0.17, yo - 0.01, 12), color: '#eef1f4' });
+  }
+  return out;
+}
+/* ซุ้มล้อ: ยกขอบล่างตัวถังขึ้นเป็นโค้งตรงตำแหน่งล้อ */
+function s3Arch(base, wheels, r, cap){
+  return function(x){
+    var z = base;
+    wheels.forEach(function(w){ var d = (x - w) / (r * 1.2); if (Math.abs(d) < 1) z = Math.max(z, base + (Math.min(r * 2.06, cap) - base) * Math.sqrt(1 - d * d)); });
+    return z;
+  };
+}
+
+/* ---------- โมเดลรถ ---------- */
+function s3Model(kind, art){
+  var col = art.color || '#c2c9d1', glass = S3_GLASS;
+  var M = { parts: [], decals: [], boxes: [], wheels: [], r: 0.44, W: 1.8, L: 4 };
+  var bodyColor = function(){ return col; };
+  /* ห้องโดยสาร: หลังคาสีรถ ด้านข้าง/หน้า/หลัง = กระจก, เสา B สีรถ */
+  var cabColor = function(pillars, ztFn){
+    return function(n, c){
+      var zt = s3Fn(ztFn)(c[0]);
+      /* หลังคา = แผ่นบนสุดที่เกือบแบน; ที่เหลือ (ด้านข้าง/หน้า/หลัง) = กระจกเต็มบาน */
+      if (Math.abs(n[0]) > 0.32) return glass;                               // กระจกหน้า/หลัง ทั้งแผ่น
+      if (n[2] > 0.88 || (c[2] > zt - 0.05 && n[2] > 0.55)) return col;      // หลังคา
+      if (pillars && Math.abs(n[1]) > 0.45 && pillars.some(function(px){ return Math.abs(c[0] - px) < 0.08; })) return col;
+      return glass;
+    };
+  };
+  var car = function(o){
+    M.L = o.L; M.r = o.r; M.W = o.hw * 2; M.wx = o.wheels;
+    var zb = s3Arch(o.base, o.wheels, o.r, 0.86);
+    M.body = s3Part({ x0: 0, x1: o.L, N: 22, zb: zb, zt: o.zt, hw: o.hwFn || [[0, o.hw * 0.86], [0.3, o.hw * 0.97], [o.L * 0.5, o.hw], [o.L - 0.35, o.hw * 0.97], [o.L, o.hw * 0.8]],
+                      top: 0.93, n: o.n || 3.6, nb: 7, color: o.bodyColor || bodyColor });
+    M.parts.push(M.body);
+    if (o.cab){
+      M.cab = s3Part({ x0: o.cab.x0, x1: o.cab.x1, N: 14, zb: o.cab.zb, zt: o.cab.zt, hw: o.cab.hw, top: o.cab.top || 0.74, n: o.cab.n || 3, nb: 8,
+                       color: cabColor(o.cab.pillars, o.cab.zt) });
+      M.parts.push(M.cab);
+      /* กระจกมองข้าง (เล็กๆ ติดโคนเสา A ฝั่งที่เห็น) */
+      var mx = o.cab.x1 - 0.14, mz = o.cab.zb + 0.03, my = s3SideY(M.cab, mx, mz + 0.04);
+      M.boxes.push(s3BoxFaces(mx - 0.05, mx + 0.05, my - 0.13, my + 0.01, mz, mz + 0.08, shadeHex(col, -0.15)));
+    }
+    /* ไฟหน้า / กระจัง / ไฟท้าย */
+    var fz = M.body.zt(o.L - 0.02), fzb = M.body.zb(o.L - 0.02), fhw = M.body.hw(o.L);
+    var lampZ0 = fz - 0.15, lampZ1 = fz - 0.05;
+    [[-fhw * 0.88, -fhw * 0.42], [fhw * 0.42, fhw * 0.88]].forEach(function(s){
+      M.decals.push({ pts: [[o.L + 0.006, s[0], lampZ0], [o.L + 0.006, s[1], lampZ0 + 0.02], [o.L + 0.006, s[1], lampZ1], [o.L + 0.006, s[0], lampZ1 - 0.01]], n: [1, 0, 0], color: '#fbf6e2' });
+    });
+    M.decals.push({ pts: [[o.L + 0.006, -fhw * 0.36, (fzb + fz) / 2 - 0.05], [o.L + 0.006, fhw * 0.36, (fzb + fz) / 2 - 0.05], [o.L + 0.006, fhw * 0.3, lampZ0 - 0.01], [o.L + 0.006, -fhw * 0.3, lampZ0 - 0.01]], n: [1, 0, 0], color: o.grille || '#2a3038' });
+    /* ไฟหน้าโค้งรับด้านข้าง */
+    var hx0 = o.L - 0.32, hx1 = o.L - 0.04;
+    M.decals.push({ pts: [[hx0, s3SideY(M.body, hx0, lampZ1), lampZ1], [hx1, s3SideY(M.body, hx1, lampZ1), lampZ1], [hx1, s3SideY(M.body, hx1, lampZ0), lampZ0], [hx0 + 0.06, s3SideY(M.body, hx0, lampZ0 + 0.03), lampZ0 + 0.03]], n: [0.3, -0.95, 0], color: '#eef2f6' });
+    var tz = M.body.zt(0.1);
+    M.decals.push({ pts: [[0.03, s3SideY(M.body, 0.03, tz - 0.05), tz - 0.05], [0.3, s3SideY(M.body, 0.3, tz - 0.05), tz - 0.05], [0.3, s3SideY(M.body, 0.3, tz - 0.16), tz - 0.16], [0.03, s3SideY(M.body, 0.03, tz - 0.16), tz - 0.16]], n: [-0.3, -0.95, 0], color: '#d93a3a' });
+    /* มือจับประตู */
+    if (o.cab) [o.cab.x0 + (o.cab.x1 - o.cab.x0) * 0.35, o.cab.x0 + (o.cab.x1 - o.cab.x0) * 0.75].forEach(function(x){
+      var z = o.cab.zb - 0.1;
+      M.decals.push({ pts: [[x - 0.1, s3SideY(M.body, x, z), z], [x + 0.06, s3SideY(M.body, x, z), z], [x + 0.06, s3SideY(M.body, x, z - 0.035), z - 0.035], [x - 0.1, s3SideY(M.body, x, z - 0.035), z - 0.035]], n: [0, -1, 0], color: shadeHex(col, -0.35) });
+    });
+    M.wheels = o.wheels.map(function(x){ return [x, false]; });
+  };
+
+  if (kind === 'sedan' || kind === 'sedanOld' || kind === 'sedanSmall'){
+    var L = kind === 'sedanSmall' ? 3.75 : 4.0;
+    var s = L / 4.0;
+    car({ L: L, r: 0.43, hw: 0.9, base: 0.3, wheels: [0.78 * s, 3.2 * s],
+          zt: [[0, 0.8], [0.06, 0.93], [0.45, 1.0], [1.0, 1.02], [2.9 * s, 0.99], [3.4 * s, 0.92], [L - 0.12, 0.8], [L, 0.62]],
+          cab: { x0: 0.88 * s, x1: 3.08 * s, zb: 0.97, hw: 0.82, top: 0.72, pillars: [1.98 * s],
+                 zt: kind === 'sedanOld'
+                   ? [[0.88 * s, 0.98], [1.2 * s, 1.38], [1.5 * s, 1.44], [2.4 * s, 1.44], [3.08 * s, 0.99]]
+                   : [[0.88 * s, 0.98], [1.32 * s, 1.4], [1.6 * s, 1.47], [2.3 * s, 1.47], [3.08 * s, 0.99]] } });
+  } else if (kind === 'hatch'){
+    car({ L: 3.55, r: 0.42, hw: 0.86, base: 0.3, wheels: [0.66, 2.86], n: 3.2,
+          zt: [[0, 0.86], [0.05, 0.98], [0.3, 1.02], [2.5, 1.0], [3.05, 0.9], [3.45, 0.76], [3.55, 0.6]],
+          cab: { x0: 0.1, x1: 2.72, zb: 0.98, hw: 0.8, top: 0.74, pillars: [1.5],
+                 zt: [[0.1, 1.0], [0.16, 1.36], [0.42, 1.5], [1.75, 1.52], [2.72, 0.99]] } });
+  } else if (kind === 'mpv'){
+    car({ L: 4.0, r: 0.44, hw: 0.88, base: 0.32, wheels: [0.74, 3.18], n: 3.8,
+          zt: [[0, 0.98], [0.06, 1.08], [2.9, 1.1], [3.45, 1.0], [3.9, 0.86], [4.0, 0.66]],
+          cab: { x0: 0.06, x1: 3.0, zb: 1.08, hw: 0.85, top: 0.8, n: 3.6, pillars: [1.25, 2.15],
+                 zt: [[0.06, 1.1], [0.12, 1.6], [0.4, 1.72], [2.2, 1.72], [3.0, 1.1]] } });
+  } else if (kind === 'suv'){
+    car({ L: 4.1, r: 0.47, hw: 0.92, base: 0.38, wheels: [0.78, 3.3], n: 4,
+          zt: [[0, 1.08], [0.06, 1.18], [3.0, 1.2], [3.6, 1.1], [4.0, 0.95], [4.1, 0.75]],
+          cab: { x0: 0.08, x1: 3.05, zb: 1.18, hw: 0.88, top: 0.8, n: 3.8, pillars: [1.3, 2.2],
+                 zt: [[0.08, 1.2], [0.14, 1.7], [0.4, 1.8], [2.3, 1.8], [3.05, 1.2]] } });
+  } else if (kind === 'van'){
+    car({ L: 4.35, r: 0.43, hw: 0.9, base: 0.34, wheels: [0.8, 3.55], n: 5,
+          zt: [[0, 1.95], [0.08, 2.05], [3.2, 2.05], [3.85, 1.32], [4.25, 1.05], [4.35, 0.8]],
+          bodyColor: function(n, c){ return (n[0] > 0.35 && c[2] > 1.25) ? glass : col; } });
+    var vy = function(x, z){ return s3SideY(M.body, x, z); };
+    M.decals.push({ pts: [[0.3, vy(0.3, 1.88), 1.88], [3.25, vy(3.25, 1.88), 1.88], [3.25, vy(3.25, 1.42), 1.42], [0.3, vy(0.3, 1.42), 1.42]], n: [0, -1, 0], color: glass });
+    [1.1, 1.85, 2.6].forEach(function(x){ M.decals.push({ pts: [[x - 0.05, vy(x, 1.88) - 0.002, 1.88], [x + 0.05, vy(x, 1.88) - 0.002, 1.88], [x + 0.05, vy(x, 1.42) - 0.002, 1.42], [x - 0.05, vy(x, 1.42) - 0.002, 1.42]], n: [0, -1, 0], color: col }); });
+  } else if (kind === 'pickup' || kind === 'pickupBox'){
+    var bedEnd = 1.72;
+    car({ L: 4.3, r: 0.46, hw: 0.9, base: 0.38, wheels: [0.82, 3.45], n: 4.5,
+          zt: [[0, 1.06], [0.05, 1.1], [3.4, 1.1], [3.95, 1.0], [4.22, 0.86], [4.3, 0.7]],
+          bodyColor: function(n, c){ return (n[2] > 0.8 && c[0] < bedEnd - 0.05) ? '#1a1e23' : col; },
+          cab: { x0: 1.76, x1: 3.42, zb: 1.08, hw: 0.86, top: 0.8, n: 5, pillars: [2.3],
+                 zt: [[1.76, 1.1], [1.8, 1.68], [2.5, 1.74], [3.42, 1.09]] } });
+    if (kind === 'pickupBox'){
+      /* ตู้ทึบไฟเบอร์บนกระบะ + ส่วนยื่นคลุมหลังคาหัวเก๋ง (ตามรูป ผก 3595) */
+      M.parts.push(s3Part({ x0: 0.02, x1: 1.76, N: 8, zb: 1.08, zt: 2.06, hw: 0.9, top: 0.96, n: 8, nb: 8, color: function(){ return art.box; } }));
+      M.parts.push(s3Part({ x0: 1.62, x1: 2.5, N: 8, zb: 1.77, zt: [[1.62, 2.06], [2.2, 2.04], [2.5, 1.93]], hw: 0.88, top: 0.95, n: 6, nb: 8, color: function(){ return art.box; } }));
+    }
+  } else if (kind === 'truck'){
+    M.L = 4.45; M.r = 0.44; M.W = 1.95;
+    M.under = s3BoxFaces(0.2, 4.1, -0.62, 0.62, 0.42, 0.68, '#1c2026');                                   // แชสซี
+    M.parts.push(s3Part({ x0: 0, x1: 2.95, N: 10, zb: 0.7, zt: 2.45, hw: 0.97, top: 1, n: 9, nb: 9, color: function(){ return art.box; } }));
+    var cabZb = s3Arch(0.55, [3.78], 0.44, 1.2);
+    M.cabT = s3Part({ x0: 3.02, x1: 4.42, N: 14, zb: cabZb, zt: [[3.02, 2.12], [3.1, 2.24], [3.82, 2.26], [4.24, 1.64], [4.36, 1.36], [4.42, 1.2]],
+                      hw: [[3.02, 0.9], [3.6, 0.93], [4.42, 0.88]], top: 0.9, n: 5, nb: 8,
+                      color: function(n, c){
+                        if (n[0] > 0.4 && c[2] > 1.62) return glass;                                         // กระจกหน้า
+                        if (art.livery === 'band' && n[0] > 0.4 && c[2] > 1.32) return '#3c424b';            // แผงเทาเข้ม
+                        return art.color;
+                      } });
+    M.parts.push(M.cabT);
+    var cy = function(x, z){ return s3SideY(M.cabT, x, z); };
+    M.decals.push({ pts: [[3.2, cy(3.2, 2.08), 2.08], [3.82, cy(3.82, 2.08), 2.08], [4.02, cy(4.02, 1.7), 1.7], [3.2, cy(3.2, 1.62), 1.62]], n: [0, -1, 0], color: glass });
+    M.decals.push({ pts: [[3.12, cy(3.12, 1.0), 1.0], [3.3, cy(3.3, 1.0), 1.0], [3.3, cy(3.3, 0.97), 0.97], [3.12, cy(3.12, 0.97), 0.97]], n: [0, -1, 0], color: '#8f99a4' });
+    if (art.livery === 'stripe'){                                                                          // แถบเหลืองพาดข้างหัวเก๋ง (ผค 4869)
+      var sx = [3.12, 3.4, 3.7, 3.95, 4.12];
+      var top = sx.map(function(x){ return [x, cy(x, 1.5), 1.5]; }), bot = sx.slice().reverse().map(function(x){ return [x, cy(x, 1.42), 1.42]; });
+      M.decals.push({ pts: top.concat(bot), n: [0, -1, 0], color: '#f0b81c' });
+    }
+    /* ไฟหน้า + ไฟเลี้ยว */
+    [[-0.78, -0.4], [0.4, 0.78]].forEach(function(s){
+      M.decals.push({ pts: [[4.425, s[0], 0.82], [4.425, s[1], 0.82], [4.425, s[1], 1.06], [4.425, s[0], 1.06]], n: [1, 0, 0], color: '#fbf6e2' });
+      if (art.livery !== 'band') M.decals.push({ pts: [[4.425, s[0], 1.08], [4.425, s[1], 1.08], [4.425, s[1], 1.17], [4.425, s[0], 1.17]], n: [1, 0, 0], color: '#f6b04a' });
+    });
+    M.decals.push({ pts: [[4.426, -0.32, 0.86], [4.426, 0.32, 0.86], [4.426, 0.32, 1.02], [4.426, -0.32, 1.02]], n: [1, 0, 0], color: art.livery === 'stripe' ? '#1f2328' : '#e9edf1' });
+    M.boxes.push(s3BoxFaces(4.36, 4.52, -0.95, 0.95, 0.44, 0.72, art.bumper));                            // กันชน
+    M.boxes.push(s3BoxFaces(4.15, 4.24, -1.12, -0.96, art.livery === 'band' ? 1.45 : 1.62, 2.02, '#2a3038')); // กระจกมองข้าง
+    /* ไฟข้างตู้ + ลอนอะลูมิเนียม */
+    [0.35, 1.45, 2.55].forEach(function(x){ M.decals.push({ pts: [[x, -0.985, 0.78], [x + 0.17, -0.985, 0.78], [x + 0.17, -0.985, 0.86], [x, -0.985, 0.86]], n: [0, -1, 0], color: '#f4a43a' }); });
+    if (art.alu) for (var rx = 0.28; rx < 2.8; rx += 0.3) M.decals.push({ line: [[rx, -0.985, 0.82], [rx, -0.985, 2.36]], color: 'rgba(0,0,0,.13)' });
+    M.wheels = [[0.82, true], [3.78, false]];
+  } else {
+    return s3Model('sedan', art);
+  }
+  return M;
+}
+
+/* ---------- เรนเดอร์ ---------- */
+var S3_CACHE = {};
+function s3Render(M){
+  var items = [], W = M.W, r = M.r;
+  var pushFaces = function(faces, sort){
+    var vis = faces.filter(function(f){ return s3Vis(f.n); });
+    vis.forEach(function(f){ f.dd = f.pts.reduce(function(a, p){ return a + s3Proj(p).d; }, 0) / f.pts.length; f.shade = true; });
+    if (sort) vis.sort(function(a, b){ return b.dd - a.dd; });
+    vis.forEach(function(f){ items.push(f); });
+  };
+  var wheelY = function(side){ return side * (W / 2 + 0.01); };
+  M.wheels.forEach(function(w){ s3Wheel(w[0], r, wheelY(1), 1, w[1]).forEach(function(o){ items.push(o); }); });
+  if (M.under) pushFaces(M.under, true);                                                     // แชสซี อยู่หลังสุด
+  M.parts.forEach(function(p){ pushFaces(s3Faces(p), true); });
+  /* เงาในซุ้มล้อฝั่งใกล้ */
+  M.wheels.forEach(function(w){ items.push({ poly: s3Circle(w[0], r, r * 1.1, wheelY(-1) + 0.2, 20), color: '#0e1115' }); });
+  if (M.boxes.length) pushFaces([].concat.apply([], M.boxes), true);                         // กันชน/กระจกมองข้าง
+  M.decals.forEach(function(d){ if (d.line || s3Vis(d.n)) items.push(d); });
+  M.wheels.forEach(function(w){ s3Wheel(w[0], r, wheelY(-1), -1, w[1]).forEach(function(o){ items.push(o); }); });
+
+  var all = [];
+  items.forEach(function(it){
+    var p3 = it.pts || it.poly || it.hull || it.line;
+    it.sp = p3.map(s3Proj);
+    if (it.hull) it.sp = s3Hull(it.sp);
+    all = all.concat(it.sp);
+  });
+  var foot = [[0, -W / 2, 0], [M.L, -W / 2, 0], [M.L, W / 2, 0], [0, W / 2, 0]].map(s3Proj);
+  all = all.concat(foot);
+  var xs = all.map(function(p){ return p.x; }), ys = all.map(function(p){ return p.y; });
+  var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+  var VW = 200, VH = 130, pad = 7, k = Math.min((VW - pad * 2) / (maxX - minX), (VH - pad * 2) / (maxY - minY));
+  var ox = (VW - (maxX - minX) * k) / 2 - minX * k, oy = (VH - (maxY - minY) * k) / 2 - minY * k;
+  var P = function(p){ return (p.x * k + ox).toFixed(1) + ',' + (p.y * k + oy).toFixed(1); };
+  var fc = foot.reduce(function(a, p){ return { x: a.x + p.x / 4, y: a.y + p.y / 4 }; }, { x: 0, y: 0 });
+  var out = '<defs><radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset=".3" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
+    '<ellipse cx="' + (fc.x * k + ox).toFixed(1) + '" cy="' + (fc.y * k + oy + 2).toFixed(1) + '" rx="' + ((maxX - minX) * k * 0.55).toFixed(1) + '" ry="' + ((maxX - minX) * k * 0.15).toFixed(1) + '" fill="url(#sh)"/>';
+  items.forEach(function(it){
+    var pts = it.sp.map(P).join(' ');
+    if (it.line){ out += '<polyline points="' + pts + '" fill="none" stroke="' + it.color + '" stroke-width="1"/>'; return; }
+    var c = it.shade ? s3Shade(it.color, it.ns || it.n) : it.color;
+    out += '<polygon points="' + pts + '" fill="' + c + '" stroke="' + c + '" stroke-width=".55" stroke-linejoin="round"/>';
+  });
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + VW + ' ' + VH + '">' + out + '</svg>';
+}
+/* คืนเป็น <img> (data URI) — DOM เบา, ไม่มีปัญหา id ซ้ำ, แคชตามรุ่น+สี */
+function s3Img(kind, art){
+  var key = kind + '|' + JSON.stringify(art);
+  if (!S3_CACHE[key]) S3_CACHE[key] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s3Render(s3Model(kind, art)));
+  return '<img src="' + S3_CACHE[key] + '" alt="" draggable="false">';
+}
+
+/* API ที่หน้าเว็บเรียก (ชื่อเดิม) */
+var S3_SHAPE_MAP = { sedan: 'sedan', hatch: 'hatch', pickup: 'pickup', suv: 'suv', mpv: 'mpv', van: 'van', truck: 'truck' };
+function carSvg(shape, color){ return s3Img(S3_SHAPE_MAP[shape] || 'sedan', { color: color, box: '#f2f4f6', bumper: '#25292f', livery: 'white' }); }
+function carArtImg(art){ return s3Img(art.model, art); }
 function carChipHtml(v, sizeClass){
+  var art = CAR_ART[String(v['ทะเบียนรถ'] || '').replace(/\D/g, '')];     // รถที่ปั้นจากรูปจริง → ใช้โมเดลเฉพาะคัน
   var shape = guessCarShape(v), color = guessCarColor(v, shape);
   var b = getBrand(v['ยี่ห้อ']);
   var initial = v['ยี่ห้อ'] ? esc(String(v['ยี่ห้อ']).trim().charAt(0).toUpperCase()) : '';
   var badge = b
     ? '<span class="brand-badge"><img src="https://cdn.simpleicons.org/' + b.slug + '" alt="" loading="lazy" onerror="this.outerHTML=\'<i>' + initial + '</i>\'"></span>'
     : (initial ? '<span class="brand-badge"><i>' + initial + '</i></span>' : '');
-  return '<div class="car-chip ' + (sizeClass || '') + '" title="' + esc((v['ยี่ห้อ'] || '') + ' ' + (v['รุ่น'] || '')) + '">' + carSvg(shape, color) + badge + '</div>';
+  return '<div class="car-chip ' + (sizeClass || '') + '" title="' + esc((v['ยี่ห้อ'] || '') + ' ' + (v['รุ่น'] || '')) + '">' +
+    (art ? carArtImg(art) : carSvg(shape, color)) + badge + '</div>';
 }
 /* รูปจริงใน Drive → ลิงก์รูปย่อที่ <img> แสดงได้ */
 function drivePhotoSrc(url, w){
